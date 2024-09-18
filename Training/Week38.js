@@ -50,8 +50,10 @@ const millimetersOfRain = 12.5;
 */
 console.log("Task: B");
 
-const secondsInTwoPointFiveHours = 2.5 * minutesInHour * secondsInMinute
-const minutesIn123Days = 123 * hoursInDays * minutesIn123Days
+let hoursGoal = 2.5;
+let daysGoal = 123;
+const secondsInTwoPointFiveHours = hoursGoal * minutesInHour * secondsInMinute;
+const minutesIn123Days = daysGoal * hoursInDays * minutesInHour;
 
 console.log(`Seconds in 2.5 hours: ${secondsInTwoPointFiveHours}`);
 console.log(`Minutes in 123 days: ${minutesIn123Days}`);
@@ -61,7 +63,7 @@ console.log(`Minutes in 123 days: ${minutesIn123Days}`);
 */
 console.log("Task: C");
 
-for (let i = 1; i = 10; i++) {
+for (let i = 1; i <= 10; i++) {
     console.log(i);
 }
 

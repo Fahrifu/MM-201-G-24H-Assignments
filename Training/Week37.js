@@ -43,7 +43,6 @@ console.log("Task: B");
 const max = 99;
 for (let index = max; index > 0; index--) {
     console.log(index + " bottles of soda on the shelf");
-    console.log(index + " bottles of soda on the shelf");
 
     console.log(
         "Take one down, pass it around." + (index - 1) + " bottles of soda on the shelf"
@@ -62,7 +61,7 @@ console.log("Task: C");
 
 const gravity = 9.81;
 const pi = 3.14159;
-let numberOfPeople = 10;
+let numberOfPeopleInARoom = 10;
 
 /*
     Task: D
