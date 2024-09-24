@@ -81,4 +81,4 @@ async function startGame() {
     }
 }
 
-startGame();
+startGame(); //test
