@@ -1,8 +1,8 @@
 
 # Video Lectures 
 
-https://www.youtube.com/watch?v=OfkX5UnXnp0 (Relearn TicTacToe)
-https://www.youtube.com/watch?v=lfmg-EJ8gm4 (Relearn Lecture JS)
+1. https://www.youtube.com/watch?v=OfkX5UnXnp0 (Relearn TicTacToe)
+2. https://www.youtube.com/watch?v=lfmg-EJ8gm4 (Relearn Lecture JS)
 
 # Research Links
 
