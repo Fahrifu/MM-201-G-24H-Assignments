@@ -1,3 +1,8 @@
+import { loadSettings } from "./settings.mjs";
+import DICTIONARY from "./language.mjs";
+
+const settings = loadSettings();
+const language = settings.language || 'en';
 
 const PLAYER_X = 1;
 const PLAYER_O = -1;
@@ -9,8 +14,8 @@ const createGameBoard = (size) => {
 
 
 const getCellDisplay = (value) => {
-    if (value === PLAYER_X) return 'X';
-    if (value === PLAYER_O) return 'O';
+    if (value === PLAYER_X) return DICTIONARY[language].PLAYER_X;
+    if (value === PLAYER_O) return DICTIONARY[language].PLAYER_O;
     return ' ';
 };
 

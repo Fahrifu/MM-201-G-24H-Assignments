@@ -23,11 +23,11 @@ async function showMainMenu() {
 
     while (menuActive) {
         print("\n===== MAIN MENU =====")
-        print("1. Start Game")
-        print("1. Settings")
-        print("1. Exit")
+        print("1. " + DICTIONARY[language].START_GAME);
+        print("2. " + DICTIONARY[language].SETTINGS);
+        print("3. " + DICTIONARY[language].EXIT);
 
-        const choice = await askQuestion("Select an option: ");
+        const choice = await askQuestion(DICTIONARY[language].SELECT_OPTION);
         switch (choice) {
             case "1":
                 await runGame();
@@ -36,11 +36,11 @@ async function showMainMenu() {
                 await showSettingsMenu();
                 break;
             case "3":
-                print("Exiting...")
+                print(DICTIONARY[language].EXITING)
                 menuActive = false;
                 break;
             default:
-                print("Invalid choice, Please try again.");
+                print(DICTIONARY[language].INVALID_CHOICE);
 
         }
     }
@@ -51,7 +51,7 @@ async function runGame() {
     let isPlaying = true;
 
     while (isPlaying) {
-        print(`\nGame Mode: ${gameMode}`);
+        print(`\n${DICTIONARY[language].GAME_MODE} ${gameMode}`);
         drawBoard(gameboard);
         print(`${DICTIONARY[language].CURRENT_PLAYER} ${currentPlayer === PLAYER_X ? 'X' : 'O'}, ${DICTIONARY[language].TURN_MSG}`);
 
@@ -218,36 +218,38 @@ async function showSettingsMenu() {
 }
 
 async function changeGameMode() {
-    print("1. Player vs Player (PvP)");
-    print("2. Player vs Computer (PvC)");
-    const modeChoice = await askQuestion("Choose game mode: ");
+    print(DICTIONARY[language].GAME_MODE_MENU_TITLE);
+    print("1. " + DICTIONARY[language].GAME_MODE_PVP);
+    print("2. " + DICTIONARY[language].GAME_MODE_PVC);
+    const modeChoice = await askQuestion(DICTIONARY[language].CHOOSE_LANGUAGE);
     if (modeChoice == "1") {
         gameMode = "PvP";
     } else if (modeChoice == "2") {
         gameMode = "PvC";
     } else {
-        print("Invalid choice.");
+        print(DICTIONARY[language].INVALID_CHOICE);
         return;
     }
     settings.gameMode = gameMode;
     saveSettings(settings);
-    print(`Game mode changed to ${gameMode}`);
+    print(`${DICTIONARY[language].GAME_MODE_CHANGED} ${gameMode}`);
 }
 
 async function changeLanguage() {
-    print("1. English");
-    print("2. Norwegian");
-    const langChoice = await askQuestion("Choose a language: ");
+    print(DICTIONARY[language].LANGUAGE_MENU_TITLE);
+    print("1. " + DICTIONARY[language].ENGLISH);
+    print("2. " + DICTIONARY[language].NORWEGIAN);
+    const langChoice = await askQuestion(DICTIONARY[language].CHOOSE_LANGUAGE);
     if (langChoice === "1") {
         language = "en";
     } else if (langChoice === "2") {
         language = "no";
     } else {
-        print("Invalid choice.");
+        print(DICTIONARY[language].INVALID_CHOICE);
         return;
     }
     settings.language = language;
     saveSettings(settings);
-    print("Language changes");
+    print(DICTIONARY[language].LANGUAGE_CHANGED);
 }
 main();

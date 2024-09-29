@@ -1,3 +1,9 @@
+import DICTIONARY from "./language.mjs";
+import { loadSettings } from "./settings.mjs";
+
+const settings = loadSettings();
+const language = settings.language || 'en';
+
 const splashContent = `
        ████████╗██╗ ██████╗      ████████╗ █████╗  ██████╗ 
        ╚══██╔══╝██║██╔════╝      ╚══██╔══╝██╔══██╗██╔════╝ 
@@ -6,9 +12,9 @@ const splashContent = `
           ██║   ██║╚██████╗         ██║   ██║  ██║╚██████╔╝
           ╚═╝   ╚═╝ ╚═════╝         ╚═╝   ╚═╝  ╚═╝ ╚═════╝ 
 
-         Tic-Tac-Toe Game
+         ${DICTIONARY[language].GAME_TITLE}
      -------------------------------------------
-     The ultimate battle: Player vs. CPU (Player) 
+     ${DICTIONARY[language].GAME_DESCRIPTION} 
      -------------------------------------------
 `;
 
