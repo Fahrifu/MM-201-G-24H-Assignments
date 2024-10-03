@@ -3,6 +3,7 @@ import { print, askQuestion } from './io.mjs';
 import { loadSettings, saveSettings } from './settings.mjs';
 import DICTIONARY from './language.mjs';  
 import { showSplashScreen } from './splash.mjs';
+import { ANSI } from './ansi.mjs';
 
 const PLAYER_X = 1;
 const PLAYER_O = -1;
@@ -14,6 +15,7 @@ let gameboard = createGameBoard(3);
 let currentPlayer = PLAYER_X;        
 
 async function main() {
+    clearScreen();
     showSplashScreen();
     await showMainMenu();
 }
@@ -36,7 +38,7 @@ async function showMainMenu() {
                 await showSettingsMenu();
                 break;
             case "3":
-                print(DICTIONARY[language].EXITING)
+                print(DICTIONARY[language].EXITING);
                 menuActive = false;
                 break;
             default:
@@ -195,12 +197,12 @@ async function showSettingsMenu() {
     let settingsActive = true;
 
     while (settingsActive) {
-        print("\n===== Settings Menu =====");
-        print("1. Change Game Mode");
-        print("2. Change Language");
-        print("3. Back to Main Menu");
+        print(DICTIONARY[language].SETTING_MENU_TITLE);
+        print("1. " + DICTIONARY[language].CHANGE_GM);
+        print("2. " + DICTIONARY[language].CHANGE_LANGUAGE);
+        print("3. " + DICTIONARY[language].BACK_TO_MAIN_MENU);
 
-        const choice = await askQuestion("Select an option: ");
+        const choice = await askQuestion(DICTIONARY[language].SELECT_OPTION);
         switch (choice) {
             case "1":
                 await changeGameMode();
@@ -212,7 +214,7 @@ async function showSettingsMenu() {
                 settingsActive = false;
                 break;
             default:
-                print("Invalid choice, please try again.");
+                print(`${DICTIONARY[language].INVALID_CHOICE}`);
         }
     }
 }
@@ -251,5 +253,9 @@ async function changeLanguage() {
     settings.language = language;
     saveSettings(settings);
     print(DICTIONARY[language].LANGUAGE_CHANGED);
+}
+
+function clearScreen() {
+    console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME, ANSI.RESET);
 }
 main();

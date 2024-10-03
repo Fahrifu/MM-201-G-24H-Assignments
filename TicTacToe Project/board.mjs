@@ -7,18 +7,15 @@ const language = settings.language || 'en';
 const PLAYER_X = 1;
 const PLAYER_O = -1;
 
-
 const createGameBoard = (size) => {
     return Array.from({ length: size }, () => Array(size).fill(0));  
 };
-
 
 const getCellDisplay = (value) => {
     if (value === PLAYER_X) return DICTIONARY[language].PLAYER_X;
     if (value === PLAYER_O) return DICTIONARY[language].PLAYER_O;
     return ' ';
 };
-
 
 const drawBoard = (gameboard) => {
     console.clear();

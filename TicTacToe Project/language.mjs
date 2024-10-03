@@ -28,7 +28,11 @@ const DICTIONARY = {
         GAME_MODE_PVP: "Player vs Player (PvP)",
         GAME_MODE_PVC: "Player vs Computer (PvC)",
         GAME_MODE_CHANGED: "Game mode changed to",
-        INVALID_OPTION: "Invalid option. Please try again."
+        INVALID_OPTION: "Invalid option. Please try again.",
+        SETTING_MENU_TITLE: "===== Settings Menu =====",
+        CHANGE_GM: "Change Game Mode",
+        CHANGE_LANGUAGE: "Change Language",
+        BACK_TO_MAIN_MENU: "Back to Main Menu"
     },
     no: {
         CURRENT_PLAYER: "Spiller",
@@ -59,7 +63,11 @@ const DICTIONARY = {
         GAME_MODE_PVP: "Spiller mot spiller (PvP)",
         GAME_MODE_PVC: "Spiller mot datamaskin (PvC)",
         GAME_MODE_CHANGED: "Spillmodus endret til",
-        INVALID_OPTION: "Ugyldig valg. Prøv igjen."
+        INVALID_OPTION: "Ugyldig valg. Prøv igjen.",
+        SETTING_MENU_TITLE: "===== instillinger =====",
+        CHANGE_GM: "Endre spillmodus",
+        CHANGE_LANGUAGE: "Bytt språk",
+        BACK_TO_MAIN_MENU: "Tilbake til hovedmeny"
     }
 };
 
