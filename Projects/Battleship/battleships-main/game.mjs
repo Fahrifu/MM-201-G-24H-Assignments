@@ -6,63 +6,56 @@ import createMenu from "./utils/menu.mjs";
 import createMapLayoutScreen from "./game/mapLayoutScreen.mjs";
 import createInBetweenScreen from "./game/inBetweenScreen.mjs";
 import createBattleshipScreen from "./game/battleshipsScreen.mjs";
+import { setLanguage, t } from "./utils/dictionary.mjs";
 
-const MAIN_MENU_ITEMS = buildMenu();
 
 const GAME_FPS = 1000 / 60; // The theoretical refresh rate of our game engine
 let currentState = null;    // The current active state in our finite-state machine.
 let gameLoop = null;        // Variable that keeps a refrence to the interval id assigned to our game loop 
 let mainMenuScene = null;
 
-const MIN_WIDTH = 80;
-const MIN_HEIGHT = 24;
-
-function checkResolution() {
-    const { columns, rows } = process.stdout;
-    return columns >= MIN_WIDTH && rows >= MIN_HEIGHT; 
+function languageSelectionMenu() {
+    let menuItemCount = 0;
+    return createMenu([
+        {
+            text: "English", id: menuItemCount++, action: function () {
+                setLanguage("en");
+                initializeMainMenu();
+            }
+        },
+        {
+        text: "Norsk", id: menuItemCount++, action: function () {
+            setLanguage("no");
+            initializeMainMenu();
+            }
+        }
+    ]);
 }
 
-(function initialize() {
-    print(ANSI.HIDE_CURSOR);
-    clearScreen();
-
-    if (!checkResolution()) {
-        console.log(`Please resize the console to at least ${MIN_WIDTH}x${MIN_HEIGHT} and restart the game.`);
-        process.exit(1);
-    }
-    
-    mainMenuScene = createMenu(MAIN_MENU_ITEMS);
+function initializeMainMenu() {
+    mainMenuScene = createMenu(buildMainMenu());
     SplashScreen.next = mainMenuScene;
-    currentState = SplashScreen  // This is where we decide what state our finite-state machine will start in. 
-    gameLoop = setInterval(update, GAME_FPS); // The game is started.
-})();
-
-function update() {
-    currentState.update(GAME_FPS);
-    currentState.draw(GAME_FPS);
-    if (currentState.transitionTo != null) {
-        currentState = currentState.next;
-        print(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
-    }
+    currentState = SplashScreen;
+    gameLoop = setInterval(update, GAME_FPS);
 }
 
 // Suport / Utility functions ---------------------------------------------------------------
 
-function buildMenu() {
+function buildMainMenu() {
     let menuItemCount = 0;
     return [
         {
-            text: "Start Game", id: menuItemCount++, action: function () {
+            text: t("start_game"), id: menuItemCount++, action: function () {
                 clearScreen();
                 let inBetween = createInBetweenScreen();
-                inBetween.init(`SHIP PLACEMENT\nFirst player get ready.\nPlayer two look away`, () => {
+                inBetween.init(`${t("SHIP_PLACEMENT")}\n${t("First_player")}\n${t("player_look_away")}`, () => {
 
                     let p1map = createMapLayoutScreen();
                     p1map.init(FIRST_PLAYER, (player1ShipMap) => {
 
 
                         let inBetween = createInBetweenScreen();
-                        inBetween.init(`SHIP PLACMENT\nSecond player get ready.\nPlayer one look away`, () => {
+                        inBetween.init(`${t("SHIP_PLACEMENT")}\n${t("First_player")}\n${t("player_look_away")}`, () => {
                             let p2map = createMapLayoutScreen();
                             p2map.init(SECOND_PLAYER, (player2ShipMap) => {
                                 return createBattleshipScreen(player1ShipMap, player2ShipMap);
@@ -79,8 +72,33 @@ function buildMenu() {
                 currentState.transitionTo = "Map layout";
             }
         },
-        { text: "Exit Game", id: menuItemCount++, action: function () { print(ANSI.SHOW_CURSOR); clearScreen(); process.exit(); } },
+        { text: t("Exit Game"), id: menuItemCount++, action: function () { print(ANSI.SHOW_CURSOR); clearScreen(); process.exit(); } },
     ];
 }
 
+(function initialize() {
+    print(ANSI.HIDE_CURSOR);
+    clearScreen();
 
+    if (!checkResolution()) {
+        console.log(t("resize_prompt"));
+        process.exit(1);
+    }
+
+    currentState = languageSelectionMenu();
+    gameLoop = setInterval(update, GAME_FPS); // The game is started.
+})();
+
+function update() {
+    currentState.update(GAME_FPS);
+    currentState.draw(GAME_FPS);
+    if (currentState.transitionTo != null) {
+        currentState = currentState.next;
+        print(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
+    }
+}
+
+function checkResolution() {
+    const { columns, rows } = process.stdout;
+    return columns >= 80 && rows >= 24; 
+}
