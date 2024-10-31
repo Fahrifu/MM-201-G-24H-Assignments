@@ -1,6 +1,6 @@
-import { print, printCenterd } from "../utils/io.mjs";
+import { print, printCentered } from "../utils/io.mjs";
 
-function createInnBetweenScreen() {
+function createInBetweenScreen() {
     return {
         isDrawn: false,
         next: null,
@@ -20,17 +20,17 @@ function createInnBetweenScreen() {
             this.displayTime -= dt;
             if (this.displayTime <= 0) {
                 this.next = this.transitionFn();
-                this.transitionTo = "Transitioning away from innbetween screen"
+                this.transitionTo = "Transitioning away from inBetween screen"
             }
         },
 
         draw: function (dr) {
             if (this.isDrawn == false) {
                 this.isDrawn = true;
-                printCenterd(this.text);
+                printCentered(this.text);
             }
         }
     }
 }
 
-export default createInnBetweenScreen;
+export default createInBetweenScreen;
