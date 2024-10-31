@@ -25,6 +25,12 @@ function checkResolution() {
 (function initialize() {
     print(ANSI.HIDE_CURSOR);
     clearScreen();
+
+    if (!checkResolution()) {
+        console.log(`Please resize the console to at least ${MIN_WIDTH}x${MIN_HEIGHT} and restart the game.`);
+        process.exit(1);
+    }
+    
     mainMenuScene = createMenu(MAIN_MENU_ITEMS);
     SplashScreen.next = mainMenuScene;
     currentState = SplashScreen  // This is where we decide what state our finite-state machine will start in. 
