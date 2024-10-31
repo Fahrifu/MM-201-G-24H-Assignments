@@ -39,7 +39,7 @@ function createMapLayoutScreen() {
                     return false;
                 }
             } else {
-                if (this.cursorRow + size > this.height) {
+                if (this.cursorRow + size > GAME_BOARD_DIM) {
                     return false;
                 }
             }
@@ -57,10 +57,12 @@ function createMapLayoutScreen() {
 
         placeShip: function () {
             const ship = this.ships[this.currentShipIndex];
+            if (!this.canPlaceShip()) return;
+
             for (let i = 0; i < ship.size; i++) {
                 const column = this.isHorizontal ? this.cursorColumn + i : this.cursorColumn;
                 const row = this.isHorizontal ? this.cursorRow : this.cursorRow + i;
-                this.map[row][column] = ship.symbole;
+                this.map[row][column] = ship.symbol;
             }
 
             this.placedShips.push({
@@ -118,13 +120,12 @@ function createMapLayoutScreen() {
                     this.currentShipIndex++;
                     this.cursorColumn = 0;
                     this.cursorRow = 0;
+                }
                     if (this.currentShipIndex < this.ships.length) {
                         this.ship = this.ships[this.currentShipIndex];
                     } else {
                         this.next = this.transitionFn();
                         this.transitionTo = "next state";
-                    }
-
                 }
             }
         },
@@ -177,12 +178,12 @@ function createMapLayoutScreen() {
             }
             output += '\n\n';
 
-            output += `${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}Controls:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
+            output += `${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}${t("controls")}:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
             output += 'Arrow keys: Move cursor\n';
             output += 'R: Rotate ship\n';
             output += 'Enter: Place ship\n';
 
-            output += `\n${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}Ships to place:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
+            output += `\n${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}${t("ships_to_place")}:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
             this.ships.forEach((ship, index) => {
                 const status = index < this.currentShipIndex ? '✓' :
                     index === this.currentShipIndex ? '>' : ' ';
@@ -191,10 +192,6 @@ function createMapLayoutScreen() {
 
             print(output);
         }
-
-
-
-
     }
 
     return MapLayout;
