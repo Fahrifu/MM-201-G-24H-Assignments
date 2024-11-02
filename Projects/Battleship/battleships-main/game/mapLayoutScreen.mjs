@@ -3,7 +3,8 @@ import { ANSI } from "../utils/ansi.mjs";
 import { print, clearScreen } from "../utils/io.mjs";
 import units from "./units.mjs";
 import KeyBoardManager from "../utils/io.mjs";
-import { create2DArrayWithFill } from "../utils/array.mjs"
+import { create2DArrayWithFill } from "../utils/array.mjs";
+import { t } from "../utils/dictionary.mjs";
 
 ANSI.SEA__AND_SHIP = '\x1b[38;5;83;48;5;39m';
 ANSI.SEA = '\x1b[48;5;39m';
@@ -62,7 +63,7 @@ function createMapLayoutScreen() {
             for (let i = 0; i < ship.size; i++) {
                 const column = this.isHorizontal ? this.cursorColumn + i : this.cursorColumn;
                 const row = this.isHorizontal ? this.cursorRow : this.cursorRow + i;
-                this.map[row][column] = ship.symbol;
+                this.map[row][column] = ship.symbole;
             }
 
             this.placedShips.push({
