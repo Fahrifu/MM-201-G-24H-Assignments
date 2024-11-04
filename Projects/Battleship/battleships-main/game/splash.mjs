@@ -1,7 +1,9 @@
 import { print, clearScreen, printCentered } from "../utils/io.mjs";
 import { ANSI } from "../utils/ansi.mjs";
+import { t } from "../utils/dictionary.mjs";
 
-const UI = ` ######                                    #####                         
+const UI = 
+`######                                    #####                         
  #     #   ##   ##### ##### #      ###### #     # #    # # #####   ####  
  #     #  #  #    #     #   #      #      #       #    # # #    # #      
  ######  #    #   #     #   #      #####   #####  ###### # #    #  ####  
@@ -13,7 +15,6 @@ let isDrawn = false;
 let countdown = 2500;
 
 const SplashScreen = {
-
     next: null,
     transitionTo: null,
 
@@ -25,13 +26,13 @@ const SplashScreen = {
     },
 
     draw: function (dt) {
-        if (isDrawn == false) {
+        if (!isDrawn) {
             isDrawn = true;
             clearScreen();
             printCentered(UI);
+            printCentered(`\n${t("enter_or_escape")}`);
         }
     }
-
 }
 
 export default SplashScreen;

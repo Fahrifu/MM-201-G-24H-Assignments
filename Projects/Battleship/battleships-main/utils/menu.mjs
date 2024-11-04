@@ -1,12 +1,10 @@
 import { ANSI } from "../utils/ansi.mjs";
 import KeyBoardManager, { clearScreen } from "../utils/io.mjs";
 import { print, printCentered } from "../utils/io.mjs";
+import { t } from "./dictionary.mjs";
 
 let currentActiveMenuItem = 0
-let menuItemCount = 0;
 
-/*
-*/
 
 function createMenu(menuItems) {
     return {
@@ -14,25 +12,17 @@ function createMenu(menuItems) {
         next: null,
         transitionTo: null,
 
-        update: function (dt) {
+        update: function () {
             if (KeyBoardManager.isUpPressed()) {
-                currentActiveMenuItem--;
-                if (currentActiveMenuItem < 0) {
-                    currentActiveMenuItem = 0;
-                }
+                currentActiveMenuItem = (currentActiveMenuItem - 1 + menuItems.length) % menuItems.length;
                 this.isDrawn = false;
             }
-            else if (KeyBoardManager.isDownPressed()) {
-                currentActiveMenuItem++;
-                if (currentActiveMenuItem >= menuItems.length) {
-                    currentActiveMenuItem = menuItems.length - 1;
-                }
+            if (KeyBoardManager.isDownPressed()) {
+                currentActiveMenuItem = (currentActiveMenuItem + 1) % menuItems.length;
                 this.isDrawn = false;
             }
-            else if (KeyBoardManager.isEnterPressed()) {
-                if (menuItems[currentActiveMenuItem].action) {
-                    menuItems[currentActiveMenuItem].action();
-                }
+            if (KeyBoardManager.isEnterPressed() && menuItems[currentActiveMenuItem].action) {
+                menuItems[currentActiveMenuItem].action();
             }
         },
 
@@ -42,28 +32,16 @@ function createMenu(menuItems) {
                 clearScreen();
                 let output = ""
 
-                for (let index in menuItems) {
-                    let menuItem = menuItems[index]
-
-                    let title = menuItem.text;
-                    if (currentActiveMenuItem == menuItem.id) {
-                        title = `*${menuItem.text}*`;
-                    } else {
-                        title = ` ${menuItem.text} `;
-                    }
-
+                menuItems.forEach((menuItems, index) => {
+                    const title = currentActiveMenuItem === index ? `*${menuItems.text}*` : `
+                    ${menuItems.text} `;
                     output += title + "\n";
-
-                }
+                });
 
                 printCentered(output);
-
             }
         }
-
-    }
+    };
 }
-
-
 
 export default createMenu;
