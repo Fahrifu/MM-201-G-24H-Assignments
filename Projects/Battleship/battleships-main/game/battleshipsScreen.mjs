@@ -97,7 +97,7 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
                 }
                 
                 if (isGameOver()) {
-                    this.transitionTo = "Game Over";
+                    this.transitionTo = t("game_over");
                     this.next = null;
                 } else {
                     swapPlayers();
@@ -111,14 +111,7 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
             isDrawn = true;
 
             clearScreen();
-            let output = `Player ${currentPlayer === FIRST_PLAYER ? "1" : "2"}'s turn\n\n`;
-
-            if (!opponentPlayerBoard || !opponentPlayerBoard.target) {
-                console.error("opponentPlayerBoard or target array is undefined", opponentPlayerBoard);
-                return;
-            } else {
-                console.log("OpponentPlayerBoard.target contents:", opponentPlayerBoard);
-            }
+            let output = `${t("next_player_prompt", { player: currentPlayer === FIRST_PLAYER ? "Player 1" : "Player 2" })}\n\n`;
 
             output += '  ';
             for (let i = 0; i < GAME_BOARD_DIM; i++) {
@@ -152,12 +145,11 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
             output += '\n';
             
             output += `\n${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}Controls:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
-            output += 'Arrow keys: Move cursor\n';
-            output += 'Enter: Select target\n';
+            output += `${t("move_cursor")}\n${t("rotate_ship")}\n${t("place_ship")}\n`;
             print(output);
 
-            if (this.transitionTo === "Game Over") {
-                print(`\n\n${currentPlayer === FIRST_PLAYER ? "Player 1" : "Player 2"} wins!`);
+            if (this.transitionTo === t("game_over")) {
+                print(`\n\n${t("win_message", { player: currentPlayer === FIRST_PLAYER ? "Player 1" : "Player 2" })}`);
             }
         }
     }
