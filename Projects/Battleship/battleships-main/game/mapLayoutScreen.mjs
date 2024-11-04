@@ -156,17 +156,17 @@ function createMapLayoutScreen() {
                     const isInShipPreview = this.isPositionInShipPreview(x, y);
 
                     if (isInShipPreview && this.canPlaceShip()) {
-                        // Show ship preview in red
+                        
                         output += ANSI.COLOR.GREEN + '█' + ANSI.RESET + ' ';
                     } else if (isInShipPreview) {
-                        // Show ship priview in white if it cant be placed. 
+                        
                         output += ANSI.COLOR.WHITE + '█' + ANSI.RESET + ' ';
                     }
                     else if (cell !== 0) {
-                        // Show placed ships
+                        
                         output += ANSI.SEA__AND_SHIP + cell + ANSI.RESET + ' ';
                     } else {
-                        // Show waterz
+                        
                         output += ANSI.SEA + ' ' + ANSI.RESET + ' ';
                     }
                 }

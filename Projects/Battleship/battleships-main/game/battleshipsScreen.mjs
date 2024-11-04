@@ -3,7 +3,7 @@ import { print, clearScreen } from "../utils/io.mjs";
 import KeyBoardManager from "../utils/io.mjs";
 
 
-const creteBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = false) => {
+const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = false) => {
 
     let currentPlayer = FIRST_PLAYER;
     let currentPlayerBoard = firstPlayerMap;
@@ -11,6 +11,7 @@ const creteBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fal
     let cursorRow = 0;
     let cursorCol = 0;
     let isDrawn = false;
+    let lastHit = null;
 
     function swapPlayers() {
         currentPlayer *= -1;
@@ -18,16 +19,32 @@ const creteBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fal
     }
 
     function makeComputerMove() {
+        if (isGameOver()) return;
+
         let row, col;
-        do {
-            row = Math.floor(Math.random() * GAME_BOARD_DIM);
-            col = Math.floor(Math.random() * GAME_BOARD_DIM);
-        } while (opponentPlayerBoard.target[row][col] !== 0);
+        if (lastHit) {
+            const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+            for (let [dx, dy] of directions) {
+                row = lastHit.row + dx;
+                col = lastHit.col + dy;
+                if (isValidTarget(row, col)) break;
+            }
+        } else {
+            do {
+                row = Math.floor(Math.random() * GAME_BOARD_DIM);
+                col = Math.floor(Math.random() * GAME_BOARD_DIM);
+            } while (opponentPlayerBoard.target[row][col] !== 0);
+        }
 
         const targetCell = opponentPlayerBoard.ships[row][col];
         opponentPlayerBoard.target[row][col] = targetCell ? "X" : "O";
 
+        if (targetCell) lastHit = { row, col};
         if (!isGameOver()) swapPlayers();
+    }
+
+    function isValidTarget(row, col) {
+        return row >= 0 && row < GAME_BOARD_DIM && col >= 0 && col < GAME_BOARD_DIM && opponentPlayerBoard.target[row][col] === 0;
     }
 
     function isGameOver() {
@@ -146,4 +163,4 @@ const creteBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fal
     }
 };
 
-export default creteBattleshipScreen;
+export default createBattleshipScreen;

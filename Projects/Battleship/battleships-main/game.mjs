@@ -9,9 +9,9 @@ import createBattleshipScreen from "./game/battleshipsScreen.mjs";
 import { setLanguage, t } from "./utils/dictionary.mjs";
 
 
-const GAME_FPS = 1000 / 60; // The theoretical refresh rate of our game engine
-let currentState = null;    // The current active state in our finite-state machine.
-let gameLoop = null;        // Variable that keeps a refrence to the interval id assigned to our game loop 
+const GAME_FPS = 1000 / 60; 
+let currentState = null;    
+let gameLoop = null;        
 let mainMenuScene = null;
 
 function languageSelectionMenu() {
@@ -39,7 +39,7 @@ function initializeMainMenu() {
     gameLoop = setInterval(update, GAME_FPS);
 }
 
-// Suport / Utility functions ---------------------------------------------------------------
+
 
 function buildMainMenu() {
     let menuItemCount = 0;
