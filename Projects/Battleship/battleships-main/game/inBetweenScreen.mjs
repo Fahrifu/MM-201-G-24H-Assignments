@@ -5,22 +5,24 @@ function createInBetweenScreen() {
         isDrawn: false,
         next: null,
         transitionTo: null,
-        displayTime: 0,
+        displayTime: 3000,
         text: null,
         transitionFn: null,
 
-        init: function (text, transitionFn, displayTime = 3) {
-            this.displayTime = displayTime * 1000;
+        init: function (text, transitionFn, displayTime = 3000) {
+            this.displayTime = displayTime;
             this.text = text;
             this.transitionFn = transitionFn;
         },
 
         update: function (dt) {
-
             this.displayTime -= dt;
+            const secondsRemaining = Maht.ceil(this.displayTime / 1000);
             if (this.displayTime <= 0) {
                 this.next = this.transitionFn();
-                this.transitionTo = "Transitioning away from inBetween screen"
+                this.transitionTo = "next_state";
+            } else {
+                printCentered(`${this.text}\n${t("next_player_prompt", { player: secondsRemaining})}...`);
             }
         },
 
