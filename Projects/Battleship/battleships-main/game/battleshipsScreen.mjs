@@ -126,21 +126,22 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
                     const cell = opponentPlayerBoard.target[row][col];
 
                     if (row === cursorRow && col === cursorCol) {
-                        output += ANSI.COLOR.YELLOW + (cell || "█") + ANSI.RESET + ' ';
+                        output += ANSI.COLOR.YELLOW + (cell || "█") + ANSI.RESET;
                     } else if (cell === "X") {
-                        output += ANSI.COLOR.RED + cell + ANSI.RESET + ' ';
+                        output += ANSI.COLOR.RED + cell + ANSI.RESET;
                     } else if (cell === "O") {
-                        output += ANSI.COLOR.BLUE + cell + ANSI.RESET + ' ';
+                        output += ANSI.COLOR.BLUE + cell + ANSI.RESET;
                     } else {
-                        output += ANSI.SEA + ' ' + ANSI.RESET + ' ';
+                        output += ANSI.SEA + '~' + ANSI.RESET;
                     }
+                    output += ` ${cellOutput} `
                 }
-                output += `${row + 1}\n`;
+                output += `| ${row + 1}\n`;
             }
 
             output += '  ';
             for (let i = 0; i < GAME_BOARD_DIM; i++) {
-                output += ` ${String.fromCharCode(65 + i)}`;
+                output += ` ${String.fromCharCode(65 + i)} `;
             }
             output += '\n';
             
