@@ -1,6 +1,6 @@
 import { GAME_BOARD_DIM } from "../consts.mjs";
 import { ANSI } from "../utils/ansi.mjs";
-import { print, clearScreen } from "../utils/io.mjs";
+import { print, clearScreen, printCentered } from "../utils/io.mjs";
 import units from "./units.mjs";
 import KeyBoardManager from "../utils/io.mjs";
 import { create2DArrayWithFill } from "../utils/array.mjs";
@@ -36,21 +36,15 @@ function createMapLayoutScreen() {
             const size = ship.size;
 
             if (this.isHorizontal) {
-                if (this.cursorColumn + size > GAME_BOARD_DIM) {
-                    return false;
-                }
+                if (this.cursorColumn + size > GAME_BOARD_DIM) return false;
             } else {
-                if (this.cursorRow + size > GAME_BOARD_DIM) {
-                    return false;
-                }
+                if (this.cursorRow + size > GAME_BOARD_DIM) return false;
             }
 
             for (let i = 0; i < size; i++) {
                 const column = this.isHorizontal ? this.cursorColumn + i : this.cursorColumn;
                 const row = this.isHorizontal ? this.cursorRow : this.cursorRow + i;
-                if (this.map[row][column] !== 0) {
-                    return false;
-                }
+                if (this.map[row][column] !== 0) return false;
             }
 
             return true;
@@ -72,22 +66,10 @@ function createMapLayoutScreen() {
                 y: this.cursorRow,
                 isHorizontal: this.isHorizontal
             });
-
-        },
-
-        isPositionInShipPreview: function (column, row) {
-            if (this.currentShipIndex >= this.ships.length) return false;
-
-            const ship = this.ships[this.currentShipIndex];
-            if (this.isHorizontal) {
-                return row === this.cursorRow &&
-                    column >= this.cursorColumn &&
-                    column < this.cursorColumn + ship.size;
-            } else {
-                return column === this.cursorColumn &&
-                    row >= this.cursorRow &&
-                    row < this.cursorRow + ship.size;
-            }
+            
+            this.currentShipIndex++;
+            this.cursorColumn = 0;
+            this.cursorRow = 0;
         },
 
         update: function (dt) {
@@ -139,7 +121,7 @@ function createMapLayoutScreen() {
             clearScreen();
 
 
-            let output = `${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}Ship Placement Phase\n\n${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}`;
+            let output = `${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}${t("ship_placement_phase")}\n\n${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}`;
 
             output += '  ';
             for (let i = 0; i < GAME_BOARD_DIM; i++) {
@@ -180,11 +162,10 @@ function createMapLayoutScreen() {
             output += '\n\n';
 
             output += `${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}${t("controls")}:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
-            output += 'Arrow keys: Move cursor\n';
-            output += 'R: Rotate ship\n';
-            output += 'Enter: Place ship\n';
+            output += `${t("move_cursor")}\n${t("rotate_ship")}\n${t("place_ship")}\n`;
 
-            output += `\n${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}${t("ships_to_place")}:${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
+            output += `\n${ANSI.TEXT.BOLD}${ANSI.COLOR.YELLOW}${t("ships_to_place")}:
+            ${ANSI.TEXT.BOLD_OFF}${ANSI.RESET}\n`;
             this.ships.forEach((ship, index) => {
                 const status = index < this.currentShipIndex ? '✓' :
                     index === this.currentShipIndex ? '>' : ' ';
@@ -192,8 +173,23 @@ function createMapLayoutScreen() {
             });
 
             print(output);
-        }
-    }
+        },
+
+        isPositionInShipPreview: function (column, row) {
+            if (this.currentShipIndex >= this.ships.length) return false;
+
+            const ship = this.ships[this.currentShipIndex];
+            if (this.isHorizontal) {
+                return row === this.cursorRow &&
+                    column >= this.cursorColumn &&
+                    column < this.cursorColumn + ship.size;
+            } else {
+                return column === this.cursorColumn &&
+                    row >= this.cursorRow &&
+                    row < this.cursorRow + ship.size;
+            }
+        },
+    };
 
     return MapLayout;
 }
