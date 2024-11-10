@@ -61,6 +61,9 @@ const KeyBoardManager = {
     },
     isRotatePressed: () => {
         return readKeyState(KEY_ID.r);
+    },
+    isEscapePressed: () => {
+        return readKeyState(KEY.ID.escape);
     }
 
 }

@@ -1,6 +1,7 @@
 import { GAME_BOARD_DIM, FIRST_PLAYER, SECOND_PLAYER } from "../consts.mjs";
 import { print, clearScreen } from "../utils/io.mjs";
 import KeyBoardManager from "../utils/io.mjs";
+import { isGameOver, isValidTarget } from "./GameUtils.js";
 
 
 const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = false) => {
@@ -29,7 +30,9 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
                 col = lastHit.col + dy;
                 if (isValidTarget(row, col)) break;
             }
-        } else {
+        }
+
+        if (!isValidTarget(row, col)) {
             do {
                 row = Math.floor(Math.random() * GAME_BOARD_DIM);
                 col = Math.floor(Math.random() * GAME_BOARD_DIM);
@@ -41,14 +44,6 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
 
         if (targetCell) lastHit = { row, col};
         if (!isGameOver()) swapPlayers();
-    }
-
-    function isValidTarget(row, col) {
-        return row >= 0 && row < GAME_BOARD_DIM && col >= 0 && col < GAME_BOARD_DIM && opponentPlayerBoard.target[row][col] === 0;
-    }
-
-    function isGameOver() {
-        return opponentPlayerBoard.ships.every(row => row.every(cell => cell === 0 || cell === "X"));
     }
     
     return {
@@ -89,12 +84,12 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
             if (KeyBoardManager.isEnterPressed()) {
                 const targetCell = opponentPlayerBoard.ships[cursorRow][cursorCol];
                 
-                if (targetCell === 0) {
-                    opponentPlayerBoard.target[cursorRow][cursorCol] = "O";  
-                } else if (targetCell !== "X") {
-                    opponentPlayerBoard.target[cursorRow][cursorCol] = "X";  
-                    opponentPlayerBoard.ships[cursorRow][cursorCol] = "X";  
-                }
+                if (opponentPlayerBoard.target[cursorRow][cursorCol] === 0) {
+                    opponentPlayerBoard.target[cursorRow][cursorCol] = targetCell ? "X" : "O";
+
+                    if (targetCell) {
+                        opponentPlayerBoard.ships[cursorRow][cursorCol] = "X";
+                    }
                 
                 if (isGameOver()) {
                     this.transitionTo = t("game_over");
@@ -104,7 +99,8 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
                     isDrawn = false;
                 }
             }
-        },
+        }
+    },
 
         draw: function () {
             if (isDrawn) return;
@@ -124,15 +120,12 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
 
                 for (let col = 0; col < GAME_BOARD_DIM; col++) {
                     const cell = opponentPlayerBoard.target[row][col];
+                    let cellOutput = '~';
 
-                    if (row === cursorRow && col === cursorCol) {
-                        output += ANSI.COLOR.YELLOW + (cell || "█") + ANSI.RESET;
-                    } else if (cell === "X") {
-                        output += ANSI.COLOR.RED + cell + ANSI.RESET;
+                    if (cell === "X") {
+                        output += ANSI.COLOR.RED + "X" + ANSI.RESET;
                     } else if (cell === "O") {
-                        output += ANSI.COLOR.BLUE + cell + ANSI.RESET;
-                    } else {
-                        output += ANSI.SEA + '~' + ANSI.RESET;
+                        output += ANSI.COLOR.BLUE + "O" + ANSI.RESET;
                     }
                     output += ` ${cellOutput} `
                 }
@@ -153,7 +146,7 @@ const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = fa
                 print(`\n\n${t("win_message", { player: currentPlayer === FIRST_PLAYER ? "Player 1" : "Player 2" })}`);
             }
         }
-    }
-};
+    };
+}
 
 export default createBattleshipScreen;

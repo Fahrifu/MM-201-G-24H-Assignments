@@ -1,5 +1,5 @@
 import { ANSI } from "./utils/ansi.mjs";
-import { print, clearScreen, printCentered } from "./utils/io.mjs";
+import KeyBoardManager, { print, clearScreen, printCentered } from "./utils/io.mjs";
 import SplashScreen from "./game/splash.mjs";
 import createMenu from "./utils/menu.mjs";
 import createMapLayoutScreen from "./game/mapLayoutScreen.mjs";
@@ -30,6 +30,17 @@ function checkResolution() {
     return true;
 }
 
+function initialize() {
+    print(ANSI.HIDE_CURSOR);
+    clearScreen();
+
+    if(!checkResolution()) {
+        return;
+    }
+    
+    initializeMainMenu();
+}
+
 function initializeMainMenu() {
     const mainMenuScene = createMenu([
         { text: t("start_game"), action: transitionToMapLayout },
@@ -57,6 +68,7 @@ function setBoardSize(size) {
 
 function transitionToMapLayout() {
     const mapLayoutScreen = createMapLayoutScreen();
+
     mapLayoutScreen.init(FIRST_PLAYER, () => createInBetweenScreen(
         t("next_player_prompt", { player: "Player 2" }), () => {
             const player2Layout = createMapLayoutScreen();
@@ -81,15 +93,26 @@ function update(dt) {
     }
 }
 
-function initialize() {
-    print(ANSI.HIDE_CURSOR);
-    clearScreen();
+function gameOverScreen(winningPlayer) {
+    return {
+        isDrawn: false,
+        update: function (dt) {
+            if (KeyBoardManager.isEnterPressed()) {
+                initializeMainMenu();
+            }
+            if (KeyBoardManager.isEscapePressed()) {
+                process.exit();
+            }
+        },
 
-    if(!checkResolution()) {
-        return;
+        draw: function () {
+            if (!this.isDrawn) {
+                this.isDrawn = true;
+                clearScreen();
+                printCentered
+            }
+        }
     }
-    
-    initializeMainMenu();
 }
 
 initialize();
