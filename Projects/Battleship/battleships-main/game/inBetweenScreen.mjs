@@ -17,7 +17,7 @@ function createInBetweenScreen() {
 
         update: function (dt) {
             this.displayTime -= dt;
-            const secondsRemaining = Maht.ceil(this.displayTime / 1000);
+            const secondsRemaining = Math.ceil(this.displayTime / 1000);
             if (this.displayTime <= 0) {
                 this.next = this.transitionFn();
                 this.transitionTo = "next_state";

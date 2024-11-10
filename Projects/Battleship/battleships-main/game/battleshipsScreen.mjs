@@ -1,7 +1,7 @@
 import { GAME_BOARD_DIM, FIRST_PLAYER, SECOND_PLAYER } from "../consts.mjs";
 import { print, clearScreen } from "../utils/io.mjs";
 import KeyBoardManager from "../utils/io.mjs";
-import { isGameOver, isValidTarget } from "./GameUtils.js";
+import { isGameOver, isValidTarget } from "./GameUtils.mjs";
 
 
 const createBattleshipScreen = (firstPlayerMap, secondPlayerMap, vsComputer = false) => {

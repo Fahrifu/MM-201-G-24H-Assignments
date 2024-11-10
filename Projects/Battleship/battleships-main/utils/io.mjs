@@ -63,7 +63,7 @@ const KeyBoardManager = {
         return readKeyState(KEY_ID.r);
     },
     isEscapePressed: () => {
-        return readKeyState(KEY.ID.escape);
+        return readKeyState(KEY_ID.escape);
     }
 
 }
