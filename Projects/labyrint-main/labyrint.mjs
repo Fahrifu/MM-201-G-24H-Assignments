@@ -6,6 +6,7 @@ import * as CONST from "./constants.mjs";
 
 const startingLevel = CONST.START_LEVEL_ID;
 const levels = loadLevelListings();
+const levelHistory = [];
 
 function loadLevelListings(source = CONST.LEVEL_LISTING_FILE) {
     let data = readRecordFile(source);
@@ -20,9 +21,6 @@ function loadLevelListings(source = CONST.LEVEL_LISTING_FILE) {
     }
     return levels;
 }
-
-let levelData = readMapFile(levels[startingLevel]);
-let level = levelData;
 
 let pallet = {
     "█": ANSI.COLOR.LIGHT_GRAY,
@@ -55,17 +53,70 @@ const HP_MAX = 10;
 
 const playerStats = {
     hp: 8,
-    chash: 0
+    cash: 0
 }
 
 class Labyrinth {
+    constructor() {
+        this.level = [];
+        this.levelID = null;
+        this.loadLevel(startingLevel);
+    }
+
+    
+
+    loadLevel(levelID, fromDoor = null) {
+
+        if (this.levelID) {
+            levelHistory.push({
+                levelID: this.levelID,
+                playerPos: { ...playerPos }
+            });
+        }
+
+        this.levelID = levelID;
+        this.level = readMapFile(levels[levelID]);
+        playerPos.row = null;
+        playerPos.col = null;
+
+        if (fromDoor) {
+            const doorLocation = this.findSymbol("D");
+            if (doorLocation) {
+                playerPos.row = doorLocation.row;
+                playerPos.col = doorLocation.col;
+            } 
+        }
+        isDirty = true;
+    }
+
+    returnToPreviousLevel() {
+        if (levelHistory.length === 0) return;
+
+        const { levelID, playerPos: savedPos } = levelHistory.pop();
+        this.levelID = levelID;
+        this.level = readMapFile(levels[levelID]);
+        playerPos.row = savedPos.row;
+        playerPos.col = savedPos.col;
+        isDirty = true;
+    }
+
+    findSymbol(symbol) {
+        for (let row = 0; row < this.level.length; row++) {
+            for (let col = 0; col < this.level[row].length; col++) {
+                if (this.level[row][col] === symbol) {
+                    return { row, col };
+                }
+            }
+        }
+        return null;
+    }
 
     update() {
 
         if (playerPos.row == null) {
-            for (let row = 0; row < level.length; row++) {
-                for (let col = 0; col < level[row].length; col++) {
-                    if (level[row][col] == "H") {
+            for (let row = 0; row < this.level.length; row++) {
+                for (let col = 0; col < this.level[row].length; col++) {
+                    if (this.level[row][col] == HERO) {
                         playerPos.row = row;
                         playerPos.col = col;
                         break;
@@ -77,45 +128,47 @@ class Labyrinth {
             }
         }
 
-        let drow = 0;
-        let dcol = 0;
+        let dRow = 0;
+        let dCol = 0;
 
         if (KeyBoardManager.isUpPressed()) {
-            drow = -1;
+            dRow = -1;
         } else if (KeyBoardManager.isDownPressed()) {
-            drow = 1;
+            dRow = 1;
         }
 
         if (KeyBoardManager.isLeftPressed()) {
-            dcol = -1;
+            dCol = -1;
         } else if (KeyBoardManager.isRightPressed()) {
-            dcol = 1;
+            dCol = 1;
         }
 
-        let tRow = playerPos.row + (1 * drow);
-        let tcol = playerPos.col + (1 * dcol);
+        let tRow = playerPos.row + (1 * dRow);
+        let tCol = playerPos.col + (1 * dCol);
 
-        if (THINGS.includes(level[tRow][tcol])) { // Is there anything where Hero is moving to
+        if (tRow < 0 || tCol < 0 || tRow >=this.level.length || tCol >= this.level[0].length ) return;
 
-            let currentItem = level[tRow][tcol];
-            if (currentItem == LOOT) {
+        const targetCell = this.level[tRow][tCol];
+
+        if (targetCell === EMPTY || THINGS.includes(targetCell)) {
+            if (targetCell == LOOT) {
                 let loot = Math.round(Math.random() * 7) + 3;
-                playerStats.chash += loot;
+                playerStats.cash += loot;
                 eventText = `Player gained ${loot}$`;
             }
 
             // Move the HERO
-            level[playerPos.row][playerPos.col] = EMPTY;
-            level[tRow][tcol] = HERO;
+            this.level[playerPos.row][playerPos.col] = EMPTY;
+            this.level[tRow][tCol] = HERO;
 
             // Update the HERO
             playerPos.row = tRow;
-            playerPos.col = tcol;
+            playerPos.col = tCol;
 
             // Make the draw function draw.
             isDirty = true;
-        } else {
-            direction *= -1;
+        } else if (targetCell === "D"){
+            this.loadLevel("aSharpPlace", true);
         }
     }
 
@@ -128,14 +181,14 @@ class Labyrinth {
 
         console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
 
-        let rendring = "";
+        let rendering = "";
 
-        rendring += renderHud();
+        rendering += renderHud();
 
-        for (let row = 0; row < level.length; row++) {
+        for (let row = 0; row < this.level.length; row++) {
             let rowRendering = "";
-            for (let col = 0; col < level[row].length; col++) {
-                let symbol = level[row][col];
+            for (let col = 0; col < this.level[row].length; col++) {
+                let symbol = this.level[row][col];
                 if (pallet[symbol] != undefined) {
                     rowRendering += pallet[symbol] + symbol + ANSI.COLOR_RESET;
                 } else {
@@ -143,10 +196,10 @@ class Labyrinth {
                 }
             }
             rowRendering += "\n";
-            rendring += rowRendering;
+            rendering += rowRendering;
         }
 
-        console.log(rendring);
+        console.log(rendering);
         if (eventText != "") {
             console.log(eventText);
             eventText = "";
@@ -156,7 +209,7 @@ class Labyrinth {
 
 function renderHud() {
     let hpBar = `Life:[${ANSI.COLOR.RED + pad(playerStats.hp, "♥︎") + ANSI.COLOR_RESET}${ANSI.COLOR.LIGHT_GRAY + pad(HP_MAX - playerStats.hp, "♥︎") + ANSI.COLOR_RESET}]`
-    let cash = `$:${playerStats.chash}`;
+    let cash = `$:${playerStats.cash}`;
     return `${hpBar} ${cash}\n`;
 }
 
