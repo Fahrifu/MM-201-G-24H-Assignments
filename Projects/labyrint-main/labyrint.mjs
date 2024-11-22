@@ -96,8 +96,11 @@ class Labyrinth {
         if (levelHistory.length === 0) return;
 
         const { levelID, playerPos: savedPos } = levelHistory.pop();
+
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
+
+        this.level[savedPos.row][savedPos.col] = lastDoor;
         playerPos.row = savedPos.row;
         playerPos.col = savedPos.col;
         isDirty = true;
@@ -172,14 +175,10 @@ class Labyrinth {
             isDirty = true;
         }
         if (targetCell === "D") {
-            if (this.levelID === "start") {
-            this.loadLevel("aSharpPlace", true);
-            } else if (this.levelID === "aSharpPlace") {
-                this.returnToPreviousLevel();
-            }
+            this.loadLevel("aSharpPlace", "D");
         } else if (targetCell === "d") {
             if (this.levelID === "aSharpPlace") {
-                this.loadLevel("thirdRoom", true);
+                this.loadLevel("thirdRoom", "d");
             } else if (this.levelID === "thirdRoom") {
                 this.returnToPreviousLevel();
             }
