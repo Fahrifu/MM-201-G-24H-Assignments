@@ -120,6 +120,17 @@ class Labyrinth {
         return null;
     }
 
+    findSecondTeleport(currentRow, currentCol) {
+        for (let row = 0; row < this.level.length; row++) {
+            for (let col = 0; col < this.level[row].length; col++) {
+                if (this.level[row][col] = "♨︎" && (row !== currentRow || currentCol)) {
+                    return { row, col };
+                }
+            }
+        }
+        return null;
+    }
+
     update() {
 
         if (playerPos.row == null) {
@@ -169,6 +180,7 @@ class Labyrinth {
             // Restore the door symbol
             if (this.level[playerPos.row][playerPos.col] === HERO && this.lastDoorSymbol) {
                 this.level[playerPos.row][playerPos.col] = this.lastDoorSymbol;
+                this.lastDoorSymbol = null;
             } else {
                 this.level[playerPos.row][playerPos.col] = EMPTY;
             }
@@ -179,6 +191,20 @@ class Labyrinth {
 
             // Make the draw function draw.
             isDirty = true;
+
+        } else if (targetCell === "♨︎") {
+            const otherTeleport = this.findSecondTeleport(tRow, tCol);
+            if (otherTeleport) {
+                this.level[playerPos.row][playerPos.col] = "♨︎";
+
+                playerPos.row = otherTeleport.row;
+                playerPos.col = otherTeleport.col;
+                this.level[playerPos.row][playerPos.col] = HERO;
+
+                eventText = "Teleported!";
+                isDirty = true;
+            }
+
         } else if (targetCell === "D" || targetCell === "d") {
             this.lastDoorSymbol = targetCell;
         if (targetCell === "D") {
