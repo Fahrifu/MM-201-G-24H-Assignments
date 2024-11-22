@@ -72,13 +72,19 @@ class Labyrinth {
     constructor(stopGameCallBack) {
         this.stopGame = stopGameCallBack;
         this.npcs = [];
+        this.combatLog = [];
         this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
         this.loadLevel(startingLevel);
     }
 
-    
+    addCombatLog(message) {
+        this.combatLog.push(message);
+        if (this.combatLog.length > 5) {
+            this.combatLog.shift();
+        }
+    }
 
     loadLevel(levelID, fromDoor = null) {
 
@@ -281,17 +287,12 @@ class Labyrinth {
 
     draw() {
 
-        if (isDirty == false) {
-            return;
-        }
+        if (!isDirty) return;
         isDirty = false;
 
         console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
 
-        let rendering = "";
-
-        rendering += renderHud();
-
+        let rendering = renderHud();
         for (let row = 0; row < this.level.length; row++) {
             let rowRendering = "";
             for (let col = 0; col < this.level[row].length; col++) {
@@ -306,11 +307,11 @@ class Labyrinth {
             rendering += rowRendering;
         }
 
+        rendering += "\nCombat Log:\n";
+        this.combatLog.forEach(log => {
+            rendering += `${log}\n`;
+        });
         console.log(rendering);
-        if (eventText != "") {
-            console.log(eventText);
-            eventText = "";
-        }
     }
 
     handleBattle(npc) {
@@ -321,16 +322,17 @@ class Labyrinth {
         playerStats.hp -= playerDamage;
         npc.hitpoints -= npcDamage;
 
-        eventText = `Battle! Player takes ${playerDamage} damage, NPC takes ${npcDamage}`;
+        this.addCombatLog(`Battle! Player takes ${playerDamage} damage`);
+        this.addCombatLog(`NPC takes ${npcDamage}`);
 
         if (npc.hitpoints <= 0) {
-            eventText += " NPC defeated!";
+            this.addCombatLog(" NPC defeated!");
             this.level[npc.row][npc.col] = EMPTY;
             this.npcs = this.npcs.filter(n => n !== npc);
         }
 
         if (playerStats.hp <= 0) {
-            eventText += " Player defeated! Game Over."
+            this.addCombatLog(" Player defeated! Game Over.")
             this.stopGame();
         }
         isDirty = true;
