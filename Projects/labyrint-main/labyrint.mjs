@@ -7,6 +7,19 @@ import * as CONST from "./constants.mjs";
 const startingLevel = CONST.START_LEVEL_ID;
 const levels = loadLevelListings();
 const levelHistory = [];
+const DOOR_MAPPINGS = {
+    "start": { 
+        "D": { targetRoom: "aSharpPlace", targetDoor: "D" } 
+    },
+    "aSharpPlace": { 
+        "D": { targetRoom: "start", targetDoor: "D" },
+        "d": { targetRoom: "thirdRoom", targetDoor: "d" } 
+    },
+    "thirdRoom": { 
+        "d": { targetRoom: "aSharpPlace", targetDoor: "d" } 
+    }
+};
+
 
 function loadLevelListings(source = CONST.LEVEL_LISTING_FILE) {
     let data = readRecordFile(source);
@@ -82,9 +95,9 @@ class Labyrinth {
         this.level = readMapFile(levels[levelID]);
 
         if (fromDoor) {
-            const doorLocation = this.findSymbol("D");
+            const doorLocation = this.findSymbol(fromDoor);
             if (doorLocation) {
-                this.level[doorLocation.row][doorLocation.col] = HERO
+                this.level[doorLocation.row][doorLocation.col] = HERO;
                 playerPos.row = doorLocation.row;
                 playerPos.col = doorLocation.col;
                 }
@@ -98,14 +111,17 @@ class Labyrinth {
     returnToPreviousLevel() {
         if (levelHistory.length === 0) return;
 
-        const { levelID, playerPos: savedPos } = levelHistory.pop();
+        const { levelID, playerPos: savedPos, lastDoor } = levelHistory.pop();
 
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
 
-        this.level[savedPos.row][savedPos.col] = lastDoor;
+        this.level[savedPos.row][savedPos.col] = HERO;
         playerPos.row = savedPos.row;
         playerPos.col = savedPos.col;
+
+        const currentDoor = this.lastDoorSymbol || EMPTY;
+        this.level[playerPos.row][playerPos.col] = currentDoor;
         isDirty = true;
     }
 
@@ -163,8 +179,8 @@ class Labyrinth {
             dCol = 1;
         }
 
-        let tRow = playerPos.row + (1 * dRow);
-        let tCol = playerPos.col + (1 * dCol);
+        let tRow = playerPos.row + dRow;
+        let tCol = playerPos.col + dCol;
 
         if (tRow < 0 || tCol < 0 || tRow >=this.level.length || tCol >= this.level[0].length ) return;
 
@@ -206,15 +222,13 @@ class Labyrinth {
             }
 
         } else if (targetCell === "D" || targetCell === "d") {
+        this.lastDoorSymbol = targetCell;
+        const currentRoom = this.levelID;
+        const doorMapping = DOOR_MAPPINGS[currentRoom][targetCell];
+
+        if (doorMapping) {
             this.lastDoorSymbol = targetCell;
-        if (targetCell === "D") {
-            this.loadLevel("aSharpPlace", "D");
-        } else if (targetCell === "d") {
-            if (this.levelID === "aSharpPlace") {
-                this.loadLevel("thirdRoom", "d");
-            } else if (this.levelID === "thirdRoom") {
-                this.returnToPreviousLevel();
-                }
+            this.loadLevel(doorMapping.targetRoom, doorMapping.targetDoor);
             }
         }
     }
