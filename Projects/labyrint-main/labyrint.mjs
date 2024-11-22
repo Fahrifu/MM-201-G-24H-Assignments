@@ -71,6 +71,7 @@ const playerStats = {
 
 class Labyrinth {
     constructor() {
+        this.npc = [];
         this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
@@ -94,23 +95,32 @@ class Labyrinth {
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
 
-        if (levelID = "start") {
+        this.npc = [];
+        for (let row = 0; row < this.level.length; row++) {
+            for (let col = 0; col < this.level[row].length; col++) {
+                if (this.level[row][col] === "X") {
+                    this.npc.push({ row, col, direction: 1 });
+                }
+            }
+        }
+
+     if (fromDoor) {
+        const doorLocation = this.findSymbol(fromDoor);
+        if (doorLocation) {
+            this.level[doorLocation.row][doorLocation.col] = HERO;
+            playerPos.row = doorLocation.row;
+            playerPos.col = doorLocation.col;
+            }
+        } else if (levelID = "start") {
             const startingRow = 5;
             const startingCol = 4;
             this.level[startingRow][startingCol] = HERO;
             playerPos.row = startingRow;
             playerPos.col = startingCol;
-        } else if (fromDoor) {
-            const doorLocation = this.findSymbol(fromDoor);
-            if (doorLocation) {
-                this.level[doorLocation.row][doorLocation.col] = HERO;
-                playerPos.row = doorLocation.row;
-                playerPos.col = doorLocation.col;
-                }
-            } else {
-                playerPos.row = null;
-                playerPos.col = null;
-            }
+        } else {
+            playerPos.row = null;
+            playerPos.col = null;
+        }
         isDirty = true;
     }
 
@@ -235,8 +245,26 @@ class Labyrinth {
         if (doorMapping) {
             this.lastDoorSymbol = targetCell;
             this.loadLevel(doorMapping.targetRoom, doorMapping.targetDoor);
+            isDirty = true;
             }
         }
+
+        this.npc.forEach((npc) => {
+            let nextCol = npc.col + npc.direction;
+
+            if (
+                nextCol < 0 ||
+                nextCol >= this.level[0].length ||
+                this.level[npc.row][npc.col] !== EMPTY
+            ) {
+                npc.direction *= -1;
+            } else {
+                this.level[npc.row][npc.col] = EMPTY;
+                npc.col += npc.direction;
+                this.level[npc.row][npc.col] = "X";
+                isDirty = true;
+            }
+        });
     }
 
     draw() {
