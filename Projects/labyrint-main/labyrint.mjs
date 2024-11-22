@@ -94,7 +94,13 @@ class Labyrinth {
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
 
-        if (fromDoor) {
+        if (levelID = "start") {
+            const startingRow = 5;
+            const startingCol = 4;
+            this.level[startingRow][startingCol] = HERO;
+            playerPos.row = startingRow;
+            playerPos.col = startingCol;
+        } else if (fromDoor) {
             const doorLocation = this.findSymbol(fromDoor);
             if (doorLocation) {
                 this.level[doorLocation.row][doorLocation.col] = HERO;
