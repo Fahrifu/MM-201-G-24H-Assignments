@@ -70,22 +70,25 @@ class Labyrinth {
         if (this.levelID) {
             levelHistory.push({
                 levelID: this.levelID,
-                playerPos: { ...playerPos }
+                playerPos: { ...playerPos },
+                lastDoor: this.level[playerPos.row][playerPos.col]
             });
         }
 
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
-        playerPos.row = null;
-        playerPos.col = null;
 
         if (fromDoor) {
             const doorLocation = this.findSymbol("D");
             if (doorLocation) {
+                this.level[doorLocation.row][doorLocation.col] = HERO
                 playerPos.row = doorLocation.row;
                 playerPos.col = doorLocation.col;
-            } 
-        }
+                }
+            } else {
+                playerPos.row = null;
+                playerPos.col = null;
+            }
         isDirty = true;
     }
 
@@ -167,8 +170,19 @@ class Labyrinth {
 
             // Make the draw function draw.
             isDirty = true;
-        } else if (targetCell === "D"){
+        }
+        if (targetCell === "D") {
+            if (this.levelID === "start") {
             this.loadLevel("aSharpPlace", true);
+            } else if (this.levelID === "aSharpPlace") {
+                this.returnToPreviousLevel();
+            }
+        } else if (targetCell === "d") {
+            if (this.levelID === "aSharpPlace") {
+                this.loadLevel("thirdRoom", true);
+            } else if (this.levelID === "thirdRoom") {
+                this.returnToPreviousLevel();
+            }
         }
     }
 
