@@ -71,7 +71,7 @@ const playerStats = {
 
 class Labyrinth {
     constructor() {
-        this.npc = [];
+        this.npcs = [];
         this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
@@ -95,11 +95,11 @@ class Labyrinth {
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
 
-        this.npc = [];
+        this.npcs = [];
         for (let row = 0; row < this.level.length; row++) {
             for (let col = 0; col < this.level[row].length; col++) {
                 if (this.level[row][col] === "X") {
-                    this.npc.push({ row, col, direction: 1 });
+                    this.npcs.push({ row, col, direction: 1 });
                 }
             }
         }
@@ -249,22 +249,23 @@ class Labyrinth {
             }
         }
 
-        this.npc.forEach((npc) => {
+        this.npcs.forEach((npc) => {
             let nextCol = npc.col + npc.direction;
 
             if (
                 nextCol < 0 ||
                 nextCol >= this.level[0].length ||
-                this.level[npc.row][npc.col] !== EMPTY
+                this.level[npc.row][nextCol] !== EMPTY
             ) {
                 npc.direction *= -1;
             } else {
                 this.level[npc.row][npc.col] = EMPTY;
                 npc.col += npc.direction;
                 this.level[npc.row][npc.col] = "X";
-                isDirty = true;
+                
             }
         });
+        isDirty = true;
     }
 
     draw() {
