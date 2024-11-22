@@ -58,6 +58,7 @@ const playerStats = {
 
 class Labyrinth {
     constructor() {
+        this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
         this.loadLevel(startingLevel);
@@ -68,10 +69,12 @@ class Labyrinth {
     loadLevel(levelID, fromDoor = null) {
 
         if (this.levelID) {
+            const currentDoor = this.level[playerPos.row][playerPos.col];
+            this.level[playerPos.row][playerPos.col] = currentDoor;
             levelHistory.push({
                 levelID: this.levelID,
                 playerPos: { ...playerPos },
-                lastDoor: this.level[playerPos.row][playerPos.col]
+                lastDoor: currentDoor
             });
         }
 
@@ -163,17 +166,21 @@ class Labyrinth {
                 eventText = `Player gained ${loot}$`;
             }
 
-            // Move the HERO
-            this.level[playerPos.row][playerPos.col] = EMPTY;
-            this.level[tRow][tCol] = HERO;
+            // Restore the door symbol
+            if (this.level[playerPos.row][playerPos.col] === HERO && this.lastDoorSymbol) {
+                this.level[playerPos.row][playerPos.col] = this.lastDoorSymbol;
+            } else {
+                this.level[playerPos.row][playerPos.col] = EMPTY;
+            }
 
-            // Update the HERO
+            this.level[tRow][tCol] = HERO;
             playerPos.row = tRow;
             playerPos.col = tCol;
 
             // Make the draw function draw.
             isDirty = true;
-        }
+        } else if (targetCell === "D" || targetCell === "d") {
+            this.lastDoorSymbol = targetCell;
         if (targetCell === "D") {
             this.loadLevel("aSharpPlace", "D");
         } else if (targetCell === "d") {
@@ -181,6 +188,7 @@ class Labyrinth {
                 this.loadLevel("thirdRoom", "d");
             } else if (this.levelID === "thirdRoom") {
                 this.returnToPreviousLevel();
+                }
             }
         }
     }
