@@ -3,7 +3,9 @@ import KeyBoardManager from "./utils/KeyBoardManager.mjs";
 import { readMapFile, readRecordFile } from "./utils/fileHelpers.mjs";
 import * as CONST from "./constants.mjs";
 
-
+const EMPTY = " ";
+const HERO = "H";
+const LOOT = "$"
 const startingLevel = CONST.START_LEVEL_ID;
 const levels = loadLevelListings();
 const levelHistory = [];
@@ -50,10 +52,6 @@ let playerPos = {
     col: null,
 }
 
-const EMPTY = " ";
-const HERO = "H";
-const LOOT = "$"
-
 let direction = -1;
 
 let items = [];
@@ -62,15 +60,17 @@ const THINGS = [LOOT, EMPTY];
 
 let eventText = "";
 
-const HP_MAX = 10;
+const HP_MAX = 20;
 
 const playerStats = {
-    hp: 8,
+    hp: 20,
+    strength: 4,
     cash: 0
-}
+};
 
 class Labyrinth {
-    constructor() {
+    constructor(stopGameCallBack) {
+        this.stopGame = stopGameCallBack;
         this.npcs = [];
         this.lastDoorSymbol = null;
         this.level = [];
@@ -99,7 +99,13 @@ class Labyrinth {
         for (let row = 0; row < this.level.length; row++) {
             for (let col = 0; col < this.level[row].length; col++) {
                 if (this.level[row][col] === "X") {
-                    this.npcs.push({ row, col, direction: 1 });
+                    this.npcs.push({ 
+                        row, 
+                        col, 
+                        direction: 1,
+                        strength: Math.floor(Math.random() * 5) + 1,
+                        hitpoints: Math.floor(Math.random() * 10) * 5 
+                    });
                 }
             }
         }
@@ -224,17 +230,10 @@ class Labyrinth {
             // Make the draw function draw.
             isDirty = true;
 
-        } else if (targetCell === "♨︎") {
-            const otherTeleport = this.findSecondTeleport(tRow, tCol);
-            if (otherTeleport) {
-                this.level[playerPos.row][playerPos.col] = "♨︎";
-
-                playerPos.row = otherTeleport.row;
-                playerPos.col = otherTeleport.col;
-                this.level[playerPos.row][playerPos.col] = HERO;
-
-                eventText = "Teleported!";
-                isDirty = true;
+        } else if (targetCell === "X") {
+            const npc = this.npcs.find(n => n.row === tRow && n.col === tCol);
+            if (npc) {
+                this.handleBattle(npc)
             }
 
         } else if (targetCell === "D" || targetCell === "d") {
@@ -247,8 +246,20 @@ class Labyrinth {
             this.loadLevel(doorMapping.targetRoom, doorMapping.targetDoor);
             isDirty = true;
             }
-        }
 
+        } else if (targetCell === "♨︎") {
+            const otherTeleport = this.findSecondTeleport(tRow, tCol);
+            if (otherTeleport) {
+                this.level[playerPos.row][playerPos.col] = "♨︎";
+
+                playerPos.row = otherTeleport.row;
+                playerPos.col = otherTeleport.col;
+                this.level[playerPos.row][playerPos.col] = HERO;
+
+                eventText = "Teleported!";
+                isDirty = true;
+            }
+        }
         this.npcs.forEach((npc) => {
             let nextCol = npc.col + npc.direction;
 
@@ -300,6 +311,29 @@ class Labyrinth {
             console.log(eventText);
             eventText = "";
         }
+    }
+
+    handleBattle(npc) {
+        
+        const playerDamage = npc.strength;
+        const npcDamage = playerStats.strength;
+
+        playerStats.hp -= playerDamage;
+        npc.hitpoints -= npcDamage;
+
+        eventText = `Battle! Player takes ${playerDamage} damage, NPC takes ${npcDamage}`;
+
+        if (npc.hitpoints <= 0) {
+            eventText += " NPC defeated!";
+            this.level[npc.row][npc.col] = EMPTY;
+            this.npcs = this.npcs.filter(n => n !== npc);
+        }
+
+        if (playerStats.hp <= 0) {
+            eventText += " Player defeated! Game Over."
+            this.stopGame();
+        }
+        isDirty = true;
     }
 }
 

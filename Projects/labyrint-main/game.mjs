@@ -2,7 +2,7 @@ import Labyrinth from "./labyrint.mjs"
 import SplashScreen from "./splashScreen.mjs";
 import ANSI from "./utils/ANSI.mjs";
 
-const REFRESH_RATE = 250;
+const REFRESH_RATE = 300;
 
 console.log(ANSI.RESET, ANSI.CLEAR_SCREEN, ANSI.HIDE_CURSOR);
 
@@ -14,7 +14,7 @@ function init() {
     const splash = new SplashScreen();
 
     splash.animate(() => {
-        state = new Labyrinth();
+        state = new Labyrinth(() => clearInterval(intervalID));
         intervalID = setInterval(update, REFRESH_RATE)
     });
 }
