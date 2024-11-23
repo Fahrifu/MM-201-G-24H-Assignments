@@ -1,4 +1,5 @@
 import Labyrinth from "./labyrint.mjs"
+import Menu from "./menu.mjs";
 import SplashScreen from "./splashScreen.mjs";
 import ANSI from "./utils/ANSI.mjs";
 
@@ -10,13 +11,19 @@ let intervalID = null;
 let isBlocked = false;
 let state = null;
 
-function init() {
+function startGame() {
     const splash = new SplashScreen();
 
     splash.animate(() => {
         state = new Labyrinth(() => clearInterval(intervalID));
         intervalID = setInterval(update, REFRESH_RATE)
     });
+}
+
+function exitGame() {
+    console.log(ANSI.CLEAR_SCREEN);
+    console.log(ANSI.COLOR.RED + "Goodbye!" + ANSI.COLOR_RESET);
+    process.exit();
 }
 
 function update() {
@@ -30,4 +37,5 @@ function update() {
     isBlocked = false;
 }
 
-init();
+const menu = new Menu(startGame, exitGame);
+menu.show();

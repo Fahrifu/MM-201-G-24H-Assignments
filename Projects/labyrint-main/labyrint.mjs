@@ -61,7 +61,7 @@ const PICKUPS = {
         effect: (playerStats) => {
                 const amount = Math.round(Math.random() * 7) + 3;
                 playerStats.cash += amount;
-                eventText = `Player gained ${amount}$`;
+                return `Player gained ${amount}$`;
         }
     }
 };
