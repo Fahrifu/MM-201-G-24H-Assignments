@@ -37,6 +37,33 @@ function loadLevelListings(source = CONST.LEVEL_LISTING_FILE) {
     return levels;
 }
 
+const THINGS = [LOOT, EMPTY, P];
+const PICKUPS = {
+    P: {
+        name: "Mystery Item",
+        effect: (playerStats) => {
+            const isPotion = Math.random() < 0.5;
+            if (isPotion) {
+                const restoredHP = 5;
+                playerStats.hp = Math.min(playerStats.hp + restoredHP, HP_MAX);
+                return `Picked up a Mystery Item! It was a Health Potion. Restored ${restoredHP} HP`;
+            } else {
+                const damage = 3;
+                playerStats.hp = Math.max(playerStats - damage, 0);
+                return `Picked up a Mystery Item! It was a Poison. Lost ${damage} HP`;
+            }
+        }
+    },
+    $: {
+        name: "Money",
+        effect: (playerStats) => {
+                const amount = Math.round(Math.random() * 7) + 3;
+                playerStats.cash += amount;
+                eventText = `Player gained ${amount}$`;
+        }
+    }
+};
+
 let pallet = {
     "█": ANSI.COLOR.LIGHT_GRAY,
     "H": ANSI.COLOR.RED,
@@ -56,12 +83,10 @@ let direction = -1;
 
 let items = [];
 
-const THINGS = [LOOT, EMPTY];
 
 let eventText = "";
 
 const HP_MAX = 20;
-
 const playerStats = {
     hp: 20,
     strength: 4,
@@ -214,12 +239,12 @@ class Labyrinth {
 
         const targetCell = this.level[tRow][tCol];
 
-        if (targetCell === EMPTY || THINGS.includes(targetCell)) {
-            if (targetCell == LOOT) {
-                let loot = Math.round(Math.random() * 7) + 3;
-                playerStats.cash += loot;
-                eventText = `Player gained ${loot}$`;
-            }
+        //Pickups
+        if (THINGS.includes(targetCell)) {
+            if (PICKUPS[targetCell]) {
+                const message = PICKUPS[targetCell].effect(playerStats);
+                this.addCombatLog(message);
+           }
 
             // Restore the door symbol
             if (this.level[playerPos.row][playerPos.col] === HERO && this.lastDoorSymbol) {
@@ -235,7 +260,7 @@ class Labyrinth {
 
             // Make the draw function draw.
             isDirty = true;
-
+            
         } else if (targetCell === "X") {
             const npc = this.npcs.find(n => n.row === tRow && n.col === tCol);
             if (npc) {
