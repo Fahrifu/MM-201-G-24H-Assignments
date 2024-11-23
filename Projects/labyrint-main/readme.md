@@ -19,10 +19,14 @@ The game is started with the command : <code>node game.mjs</code>
 
 ** Create an animated splash screen (this was a group assignment from a previous week) using `splashScreen.mjs`.  ✅
 
-* Give the NPCs stats, such as strength and hitpoints.  
-* Implement a simple battle system where collisions deal damage, using player and NPC stats to calculate damage dealt.  
-* Output battle events to the event messages displayed beneath the map.  
-* Have event messages remain on screen longer (currently, they only survive one update cycle).  
+* Give the NPCs stats, such as strength and hitpoints.  ✅
+
+* Implement a simple battle system where collisions deal damage, using player and NPC stats to calculate damage dealt.  ✅
+
+* Output battle events to the event messages displayed beneath the map.  ✅
+
+* Have event messages remain on screen longer (currently, they only survive one update cycle).  ✅
+
 * Create two new pickups: a health potion and poison, and include them in your level.  
 * Make the B NPC shoot projectiles when the hero is close; projectiles must be visible and move in a straight line.  
 * Create a menu with at least two options: Play and Exit.  
