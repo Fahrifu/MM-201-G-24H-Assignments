@@ -109,7 +109,25 @@ class Labyrinth {
     }
 
     updateProjectiles() {
-        
+        const newProjectiles = [];
+
+        this.projectiles.forEach((projectile) => {
+            const newRow = projectile.row + projectile.dRow;
+            const newCol = projectile.col + projectile.dCol;
+
+            if (
+                nextRow < 0 || nextCol < 0 ||
+                nextRow >= this.level.length || nextCol >= this.level[0].length || 
+                this.level[nextRow][nextCol] === "█"
+            ) {
+                return;
+            }
+            
+
+            this.level[projectile.row][projectile.col] = EMPTY;
+            this.level[nextRow][nextCol] = "*"
+            newProjectiles.push({ ...projectile, row: nextRow, col: nextCol});
+        });
     }
 
     addCombatLog(message) {
