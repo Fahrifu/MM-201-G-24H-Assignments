@@ -5,7 +5,9 @@ import * as CONST from "./constants.mjs";
 
 const EMPTY = " ";
 const HERO = "H";
-const LOOT = "$"
+const LOOT = "$";
+const MYSTERY = "P";
+
 const startingLevel = CONST.START_LEVEL_ID;
 const levels = loadLevelListings();
 const levelHistory = [];
@@ -37,7 +39,7 @@ function loadLevelListings(source = CONST.LEVEL_LISTING_FILE) {
     return levels;
 }
 
-const THINGS = [LOOT, EMPTY, P];
+const THINGS = [LOOT, EMPTY, MYSTERY];
 const PICKUPS = {
     P: {
         name: "Mystery Item",
@@ -68,8 +70,10 @@ let pallet = {
     "█": ANSI.COLOR.LIGHT_GRAY,
     "H": ANSI.COLOR.RED,
     "$": ANSI.COLOR.YELLOW,
-    "B": ANSI.COLOR.GREEN,
-}
+    "B": ANSI.COLOR.BLUE,
+    "P": ANSI.COLOR.GREEN,
+    "*": ANSI.COLOR.WHITE
+};
 
 
 let isDirty = true;
@@ -78,11 +82,6 @@ let playerPos = {
     row: null,
     col: null,
 }
-
-let direction = -1;
-
-let items = [];
-
 
 let eventText = "";
 
@@ -97,11 +96,20 @@ class Labyrinth {
     constructor(stopGameCallBack) {
         this.stopGame = stopGameCallBack;
         this.npcs = [];
+        this.projectiles = [];
         this.combatLog = [];
         this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
         this.loadLevel(startingLevel);
+    }
+
+    addProjectile(row, col, draw, dCol) {
+        this.projectiles.push({ row, col, draw, dCol });
+    }
+
+    updateProjectiles() {
+        
     }
 
     addCombatLog(message) {
@@ -260,7 +268,7 @@ class Labyrinth {
 
             // Make the draw function draw.
             isDirty = true;
-            
+
         } else if (targetCell === "X") {
             const npc = this.npcs.find(n => n.row === tRow && n.col === tCol);
             if (npc) {
@@ -292,6 +300,15 @@ class Labyrinth {
             }
         }
         this.npcs.forEach((npc) => {
+            if (npc.type === "B") {
+                const heroDistance = Math.abs(npc.row - playerPos.row) + Math.abs(npc.col - playerPos.col);
+                if (heroDistance <= 5) {
+                    let dRow = Math.sign(playerPos.row - npc.row);
+                    let dCol = Math.sign(playerPos.col - npc.col);
+
+                    this.addProjectile(npc.row, npc.col, draw, dCol);
+                }
+            }
             let nextCol = npc.col + npc.direction;
 
             if (
@@ -308,6 +325,7 @@ class Labyrinth {
             }
         });
         isDirty = true;
+        this.updateProjectiles();
     }
 
     draw() {
