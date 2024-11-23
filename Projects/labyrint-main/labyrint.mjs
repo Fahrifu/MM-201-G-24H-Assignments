@@ -51,7 +51,7 @@ const PICKUPS = {
                 return `Picked up a Mystery Item! It was a Health Potion. Restored ${restoredHP} HP`;
             } else {
                 const damage = 3;
-                playerStats.hp = Math.max(playerStats - damage, 0);
+                playerStats.hp = Math.max(playerStats.hp - damage, 0);
                 return `Picked up a Mystery Item! It was a Poison. Lost ${damage} HP`;
             }
         }
@@ -170,7 +170,7 @@ class Labyrinth {
                         col, 
                         direction: 1,
                         strength: Math.floor(Math.random() * 5) + 1,
-                        hitpoints: Math.floor(Math.random() * 10) * 5 
+                        hitpoints: Math.floor(Math.random() * 10) + 5 
                     });
                 }
             }
