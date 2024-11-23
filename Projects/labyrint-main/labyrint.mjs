@@ -122,7 +122,16 @@ class Labyrinth {
             ) {
                 return;
             }
-            
+
+            if (nextRow === playerPos.row && nextCol === playerPos.col) {
+                const damage = 2;
+                playerStats.hp -= damage;
+                this.addCombatLog(`Projectile hits the player! Took ${damage} damage`);
+                if (playerStats <= 0) {
+                    this.addCombatLog("Player defeated! Game Over");
+                    this.stopGame();
+                }
+            }
 
             this.level[projectile.row][projectile.col] = EMPTY;
             this.level[nextRow][nextCol] = "*"
