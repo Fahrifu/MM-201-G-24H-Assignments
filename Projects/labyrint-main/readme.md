@@ -27,9 +27,12 @@ The game is started with the command : <code>node game.mjs</code>
 
 * Have event messages remain on screen longer (currently, they only survive one update cycle).  ✅
 
-* Create two new pickups: a health potion and poison, and include them in your level.  
-* Make the B NPC shoot projectiles when the hero is close; projectiles must be visible and move in a straight line.  
-* Create a menu with at least two options: Play and Exit.  
+* Create two new pickups: a health potion and poison, and include them in your level.  ✅
+
+* Make the B NPC shoot projectiles when the hero is close; projectiles must be visible and move in a straight line.  ✅
+
+* Create a menu with at least two options: Play and Exit.  ✅
+
 * Implement a more complex combat system.  
 * Have environment items like "◀︎" deal damage.  
 * Create a new NPC with an area effect ability.  
