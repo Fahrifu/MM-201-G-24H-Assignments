@@ -235,6 +235,21 @@ class Labyrinth {
         return null;
     }
 
+    handleTeleport(currentRow, currentCol) {
+        const otherTeleport = this.findSecondTeleport(currentRow, currentCol);
+
+        if (otherTeleport) {
+            this.level[currentRow][currentCol] = "♨︎";
+
+            playerPos.row = otherTeleport.row;
+            playerPos.col = otherTeleport.col;
+            this.level[playerPos.row][playerPos.col] = HERO;
+
+            this.addCombatLog("Teleported to another location!");
+            isDirty = true;
+        }
+    }
+
     update() {
 
         if (playerPos.row == null) {
@@ -314,17 +329,7 @@ class Labyrinth {
             }
 
         } else if (targetCell === "♨︎") {
-            const otherTeleport = this.findSecondTeleport(tRow, tCol);
-            if (otherTeleport) {
-                this.level[playerPos.row][playerPos.col] = "♨︎";
-
-                playerPos.row = otherTeleport.row;
-                playerPos.col = otherTeleport.col;
-                this.level[playerPos.row][playerPos.col] = HERO;
-
-                eventText = "Teleported!";
-                isDirty = true;
-            }
+            this.handleTeleport(tRow, tCol);
         }
         this.npcs.forEach((npc) => {
             if (npc.type === "B") {
