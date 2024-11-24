@@ -63,6 +63,13 @@ const PICKUPS = {
                 playerStats.cash += amount;
                 return `Player gained ${amount}$`;
         }
+    },
+    "⚔️": {
+        name: "Sword",
+        effect: (playerStats) => {
+            playerStats.weapon = WEAPONS.sword;
+            return "Picked up Sword! Strength increased"
+        }
     }
 };
 
@@ -89,8 +96,14 @@ const HP_MAX = 20;
 const playerStats = {
     hp: 20,
     strength: 4,
+    weapon: null,
     cash: 0
 };
+
+const WEAPONS = {
+    sword: {name: "Sword", bonus: 2 },
+    axe: { name: "Axe", bonus: 3 }
+}
 
 class Labyrinth {
     constructor(stopGameCallBack) {
@@ -391,14 +404,23 @@ class Labyrinth {
 
     handleBattle(npc) {
         
-        const playerDamage = npc.strength;
-        const npcDamage = playerStats.strength;
+        const weaponBonus = playerStats.weapon ? playerStats.weapon.bonus : 0;
 
+        let playerDamage = playerStats.strength + weaponBonus;
+        if (Math.random() < 0.2) {
+            playerDamage *= 2;
+            this.addCombatLog("Critical Hit! Double damage Dealt");
+        }
+
+        const defenseReduction = Math.floor(Math.random() * npc.strength);
+        const netDamageToNPC = Math.max(0, playerDamage - defenseReduction);
+        npc.hitpoints -= netDamageToNPC; 
+        
+        const npcDamage = npc.strength;
         playerStats.hp -= playerDamage;
-        npc.hitpoints -= npcDamage;
 
-        this.addCombatLog(`Battle! Player takes ${playerDamage} damage`);
-        this.addCombatLog(`NPC takes ${npcDamage}`);
+        this.addCombatLog(`Battle! Player attacks NPC for ${netDamageToNPC} damage (${defenseReduction} blocked).`);
+        this.addCombatLog(`NPC attacks player for ${npcDamage} damage`);
 
         if (npc.hitpoints <= 0) {
             this.addCombatLog(" NPC defeated!");
