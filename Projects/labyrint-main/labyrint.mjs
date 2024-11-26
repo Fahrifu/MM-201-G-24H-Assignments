@@ -7,6 +7,7 @@ const EMPTY = " ";
 const HERO = "H";
 const LOOT = "$";
 const MYSTERY = "P";
+const HERO_ON_TELEPORTER = "@";
 
 const startingLevel = CONST.START_LEVEL_ID;
 const levels = loadLevelListings();
@@ -70,6 +71,13 @@ const PICKUPS = {
             playerStats.weapon = WEAPONS.sword;
             return "Picked up Sword! Strength increased"
         }
+    },
+    "🪓": {
+        name: "Axe",
+        effect: (playerStats) => {
+            playerStats.weapon = WEAPONS.axe;
+            return "Picked up Axe! Strength increased"
+        }
     }
 };
 
@@ -102,7 +110,7 @@ const playerStats = {
 
 const WEAPONS = {
     sword: {name: "Sword", bonus: 2 },
-    axe: { name: "Axe", bonus: 3 }
+    axe: {name: "Axe", bonus: 3 }
 }
 
 class Labyrinth {
@@ -114,6 +122,7 @@ class Labyrinth {
         this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
+        this.teleportPairs = {};
         this.loadLevel(startingLevel);
     }
 
@@ -173,6 +182,25 @@ class Labyrinth {
 
         this.levelID = levelID;
         this.level = readMapFile(levels[levelID]);
+
+        this.teleportPairs = {};
+        const teleporters = [];
+        for (let row = 0; row < this.level.length; row++) {
+            for (let col = 0; col < this.level[row].length; col++) {
+                if (this.level[row][col] === "T") {
+                    teleporters.push({ row, col });
+                }
+            }
+        }
+        this.addCombatLog("Teleporters found:", teleporters);
+        if (teleporters.length === 2) {
+            const [t1, t2] = teleporters;
+            this.addCombatLog(`Pairing teleporters: ${t1.row},${t1.col} ↔ ${t2.row},${t2.col}`);
+            this.teleportPairs[`${t1.row},${t1.col}`] = t2;
+            this.teleportPairs[`${t2.row},${t2.col}`] = t1;
+        } else {
+            console.warn(`Teleporters are not paired properly: Found ${teleporters.length}. Expected exactly 2.`)
+        }
 
         this.npcs = [];
         for (let row = 0; row < this.level.length; row++) {
@@ -237,26 +265,25 @@ class Labyrinth {
         return null;
     }
 
-    findSecondTeleport(currentRow, currentCol) {
-        for (let row = 0; row < this.level.length; row++) {
-            for (let col = 0; col < this.level[row].length; col++) {
-                if (this.level[row][col] = "♨︎" && (row !== currentRow || currentCol)) {
-                    return { row, col };
-                }
-            }
-        }
-        return null;
-    }
-
     handleTeleport(currentRow, currentCol) {
-        const otherTeleport = this.findSecondTeleport(currentRow, currentCol);
+        const key = `${currentRow},${currentCol}`;
+        const target = this.teleportPairs[key];
 
-        if (otherTeleport) {
-            this.level[currentRow][currentCol] = "♨︎";
+        if (target) {
+            this.level[currentRow][currentCol] = "T";
 
-            playerPos.row = otherTeleport.row;
-            playerPos.col = otherTeleport.col;
-            this.level[playerPos.row][playerPos.col] = HERO;
+            this.level[playerPos.row][playerPos.col] = EMPTY;
+
+            if (this.level[playerPos.row][playerPos.col] = HERO) {
+                this.level[playerPos.row][playerPos.col] = EMPTY;
+            } else if (this.level[playerPos.row][playerPos.col] = HERO_ON_TELEPORTER) {
+                this.level[playerPos.row][playerPos.col] = "T";
+            }
+
+            playerPos.row = target.row;
+            playerPos.col = target.col;
+            
+            this.level[playerPos.row][playerPos.col] = HERO_ON_TELEPORTER;
 
             this.addCombatLog("Teleported to another location!");
             isDirty = true;
@@ -341,7 +368,7 @@ class Labyrinth {
             isDirty = true;
             }
 
-        } else if (targetCell === "♨︎") {
+        } else if (targetCell === "T") {
             this.handleTeleport(tRow, tCol);
         }
         this.npcs.forEach((npc) => {

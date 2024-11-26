@@ -5,7 +5,7 @@ Any feature marked with ** is considered compulsory. Some features are interdepe
 
 The game is started with the command : <code>node game.mjs</code>
 
-**Logged Hours Spent Coding & Research: 12 hours**
+**Logged Hours Spent Coding & Research: 14 hours**
 ## Features (Tasks)
 ** The starting level has an empty slot in the surrounding wall. This slot should function as a door into the level called "aSharpPlace." Implement the door functionality so that the player can proceed to the next level.  ✅
 
@@ -33,7 +33,7 @@ The game is started with the command : <code>node game.mjs</code>
 
 * Create a menu with at least two options: Play and Exit.  ✅
 
-* Implement a more complex combat system.  
+* Implement a more complex combat system.  -
 * Have environment items like "◀︎" deal damage.  
 * Create a new NPC with an area effect ability.  
 * Add weapons as pickups and have them influence battles.  
