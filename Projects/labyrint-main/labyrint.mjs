@@ -92,6 +92,8 @@ const CHEAT_CODES = {
     }
 }
 
+const SHOP_ITEMS = "";
+
 let pallet = {
     "█": ANSI.COLOR.LIGHT_GRAY,
     "H": ANSI.COLOR.RED,
@@ -385,6 +387,8 @@ class Labyrinth {
 
         } else if (targetCell === "\u2668") {
             this.handleTeleport(tRow, tCol);
+        } else if (targetCell === "S") {
+            enterShop(playerStats);
         }
         this.npcs.forEach((npc) => {
             if (npc.type === "B") {
@@ -560,6 +564,39 @@ function handlePlayerInput(playerStats) {
         cheatBuffer = cheatBuffer.slice(0, -1);
     } else if (key && key.length === 1) {
         cheatBuffer += key;
+    }
+}
+
+function enterShop(playerStats) {
+    let inShop = true;
+
+    while (inShop) {
+        console.log("\nWelcome to the Shop!");
+        console.log(`Your cash: $${playerStats.cash}`);
+        console.log("Available items:");
+
+        Object.keys(SHOP_ITEMS).forEach((item, index) => {
+            console.log(`${index + 1}. ${item} - $${SHOP_ITEMS[item].cost}`)
+        });
+        console.log("0. Exit Shop");
+
+        const choice = parseInt(prompt("Enter the number of the item you want to buy: "));
+
+        if (!choice) {
+            inShop = false;
+            console.log("Exiting shop");
+        } else {
+            const item = Object.keys(SHOP_ITEMS)[choice - 1];
+            continue;
+        }
+
+        const selectedItem = SHOP_ITEMS[item];
+        if (playerStats.cash >= selectedItem.cost) {
+            playerStats.cash -= selectedItem.cost;
+            console.log(selectedItem.effect(playerStats));
+        } else {
+            console.log("You broke");
+        }
     }
 }
 
