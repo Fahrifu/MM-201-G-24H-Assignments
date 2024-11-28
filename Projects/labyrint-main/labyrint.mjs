@@ -81,6 +81,17 @@ const PICKUPS = {
     }
 };
 
+const CHEAT_CODES = {
+    "There can only be one": (playerStats) => {
+        playerStats.hp = HP_MAX;
+        return "Cheat Active: HP restored";
+    },
+    "Pot of gold": (playerStats) => {
+        playerStats.cash += 100;
+        return "Cheat Active: I'm Rich";
+    }
+}
+
 let pallet = {
     "█": ANSI.COLOR.LIGHT_GRAY,
     "H": ANSI.COLOR.RED,
@@ -90,6 +101,7 @@ let pallet = {
     "*": ANSI.COLOR.WHITE
 };
 
+let cheatBuffer = "";
 
 let isDirty = true;
 
@@ -409,9 +421,16 @@ class Labyrinth {
 
         console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
 
+        const { verticalPadding, horizontalPadding } = CenterOffSets(this.level);
+
         let rendering = renderHud();
+
+        for (let i = 0; i < verticalPadding; i++) {
+            rendering += "\n";
+        }
+
         for (let row = 0; row < this.level.length; row++) {
-            let rowRendering = "";
+            let rowRendering = " ".repeat(horizontalPadding);
             for (let col = 0; col < this.level[row].length; col++) {
                 let symbol = this.level[row][col];
                 if (pallet[symbol] != undefined) {
@@ -502,5 +521,27 @@ function pad(len, text) {
     return output;
 }
 
+function getTerminalSize() {
+     return {
+        width: process.stdout.columns,
+        height: process.stdout.rows
+     };
+}
+
+function CenterOffSets(level) {
+    const terminalSize = getTerminalSize();
+    const mapHeight = level.length;
+    const mapWidth = level[0].length;
+
+    const verticalPadding = Math.max(0, Math.floor((terminalSize.height - mapHeight) / 2));
+    const horizontalPadding = Math.max(0, Math.floor((terminalSize.width - mapWidth) / 2));
+
+    console.log(`Width=${mapWidth} Height=${mapHeight}`);
+    console.log(`Vertical=${verticalPadding} Hori=${horizontalPadding}`);
+    console.log(terminalSize)
+    console.log(typeof mapHeight)
+
+    return {verticalPadding, horizontalPadding};
+}
 
 export default Labyrinth;
