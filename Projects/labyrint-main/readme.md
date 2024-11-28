@@ -33,14 +33,14 @@ The game is started with the command : <code>node game.mjs</code>
 
 * Create a menu with at least two options: Play and Exit.  ✅
 
-* Implement a more complex combat system.  In progress
-* Have environment items like "◀︎" deal damage.  In progress
+* Implement a more complex combat system.  ✅
+* Have environment items like "◀︎" deal damage.  
 * Create a new NPC with an area effect ability.  
-* Add weapons as pickups and have them influence battles.  
-* Refactor the `labyrinth.mjs` code file to improve its structure; for instance, level loading logic does not belong there.  
-* When a character takes damage, briefly color the background of that character red.  
-* Display NPC stats during battles.  
-* Center the level on the screen.  
+* Add weapons as pickups and have them influence battles. ✅ 
+* Refactor the `labyrinth.mjs` code file to improve its structure; for instance, level loading logic does not belong there.  Later
+* When a character takes damage, briefly color the background of that character red.  ✅
+* Display NPC stats during battles.  ✅
+* Center the level on the screen.  -
 * Implement a variation of the Warcraft I cheat codes, such as "There can be only one" and "Pot of gold."  
 * Add a shop where the player can buy health potions (and potentially weapons).  
 * Implement a dynamic palette per level instead of the current static palette (as discussed in class).  
