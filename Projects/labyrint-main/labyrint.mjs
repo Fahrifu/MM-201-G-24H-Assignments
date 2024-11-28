@@ -119,6 +119,7 @@ class Labyrinth {
         this.npcs = [];
         this.projectiles = [];
         this.combatLog = [];
+        this.encounterLog = [];
         this.lastDoorSymbol = null;
         this.level = [];
         this.levelID = null;
@@ -187,7 +188,7 @@ class Labyrinth {
         const teleporters = [];
         for (let row = 0; row < this.level.length; row++) {
             for (let col = 0; col < this.level[row].length; col++) {
-                if (this.level[row][col] === "T") {
+                if (this.level[row][col] === "\u2668") {
                     teleporters.push({ row, col });
                 }
             }
@@ -270,14 +271,14 @@ class Labyrinth {
         const target = this.teleportPairs[key];
 
         if (target) {
-            this.level[currentRow][currentCol] = "T";
+            this.level[currentRow][currentCol] = `\u2668`;
 
             this.level[playerPos.row][playerPos.col] = EMPTY;
 
             if (this.level[playerPos.row][playerPos.col] = HERO) {
                 this.level[playerPos.row][playerPos.col] = EMPTY;
             } else if (this.level[playerPos.row][playerPos.col] = HERO_ON_TELEPORTER) {
-                this.level[playerPos.row][playerPos.col] = "T";
+                this.level[playerPos.row][playerPos.col] = `\u2668`;
             }
 
             playerPos.row = target.row;
@@ -354,6 +355,7 @@ class Labyrinth {
         } else if (targetCell === "X") {
             const npc = this.npcs.find(n => n.row === tRow && n.col === tCol);
             if (npc) {
+                this.addEncounterLog(`Encountered an NPC! HP=${npc.hitpoints}, STR=${npc.strength}`);
                 this.handleBattle(npc)
             }
 
@@ -368,7 +370,7 @@ class Labyrinth {
             isDirty = true;
             }
 
-        } else if (targetCell === "T") {
+        } else if (targetCell === "\u2668") {
             this.handleTeleport(tRow, tCol);
         }
         this.npcs.forEach((npc) => {
@@ -449,6 +451,9 @@ class Labyrinth {
         this.addCombatLog(`Battle! Player attacks NPC for ${netDamageToNPC} damage (${defenseReduction} blocked).`);
         this.addCombatLog(`NPC attacks player for ${npcDamage} damage`);
 
+        this.triggerDamageEffect("player");
+        if (netDamageToNPC < 0) this.triggerDamageEffect(npc);
+
         if (npc.hitpoints <= 0) {
             this.addCombatLog(" NPC defeated!");
             this.level[npc.row][npc.col] = EMPTY;
@@ -460,6 +465,26 @@ class Labyrinth {
             this.stopGame();
         }
         isDirty = true;
+    }
+
+    triggerDamageEffect(character) {
+        if (character === "player") {
+            console.log("\x1b[41m", `Player takes damage!`, "\x1b[0m");
+            setTimeout(() => console.log("\x1b[0m"), 250);
+        } else if (character.row != undefined && character.col != undefined) {
+            this.level[character.row][character.col] = "\x1b[41mX\x1b[0m";
+            setTimeout(() => {
+                this.level[character.row][character.col];
+                isDirty = true;
+            }, 250);
+        }
+    }
+
+    addEncounterLog(message) {
+        this.encounterLog.push(message);
+        if (this.encounterLog.length > 5) {
+            this.encounterLog.shift();
+        }
     }
 }
 

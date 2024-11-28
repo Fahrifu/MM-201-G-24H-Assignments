@@ -1,3 +1,15 @@
+export const EMPTY = " ";
+
+
+
+
+
+
+
+
+
+
+
 
 // Files and folders
 const LEVEL_LISTING_FILE = "./data/levels.txt";

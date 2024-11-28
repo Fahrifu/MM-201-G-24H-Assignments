@@ -11,7 +11,7 @@ The game is started with the command : <code>node game.mjs</code>
 
 ** Create a new level (a third level) and link the unused door in "aSharpPlace" to exit into the new room.  ✅
 
-** In "aSharpPlace," implement teleport functionality for the "♨︎" symbols. Entering one should move the player to the other.  ✅
+** In "aSharpPlace," implement teleport functionality for the "♨︎" symbols. Entering one should move the player to the other.  ✅ // replaced it with "T"
 
 ** Ensure that when going back through a door, the player returns to the correct room.  ✅
 
@@ -33,8 +33,8 @@ The game is started with the command : <code>node game.mjs</code>
 
 * Create a menu with at least two options: Play and Exit.  ✅
 
-* Implement a more complex combat system.  -
-* Have environment items like "◀︎" deal damage.  
+* Implement a more complex combat system.  In progress
+* Have environment items like "◀︎" deal damage.  In progress
 * Create a new NPC with an area effect ability.  
 * Add weapons as pickups and have them influence battles.  
 * Refactor the `labyrinth.mjs` code file to improve its structure; for instance, level loading logic does not belong there.  
