@@ -13,6 +13,8 @@ process.stdin.on("keypress", (str, key) => {
 
     if (KEY_STATES.hasOwnProperty(key.name)) {
         KEY_STATES[key.name] = true;
+    } else {
+        lastKey = key.name;
     }
 });
 
@@ -32,6 +34,7 @@ const KEY_STATES = Object.keys(KEY_ID).reduce((prev, cur) => {
     return prev;
 }, {});
 
+let lastKey = null;
 
 function readKeyState(key) {
     let value = KEY_STATES[key];
@@ -60,6 +63,12 @@ const KeyBoardManager = {
     },
     isRotatePressed: () => {
         return readKeyState(KEY_ID.r);
+    },
+
+    getLastKey: () => {
+        const key = lastKey;
+        lastKey = null;
+        return key;
     }
 
 }

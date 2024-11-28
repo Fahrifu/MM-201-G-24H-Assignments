@@ -175,7 +175,7 @@ class Labyrinth {
     }
 
     addCombatLog(message) {
-        this.combatLog.push(message);
+        this.combatLog.push(`> ${message}`);
         if (this.combatLog.length > 5) {
             this.combatLog.shift();
         }
@@ -304,6 +304,7 @@ class Labyrinth {
     }
 
     update() {
+        handlePlayerInput(playerStats);
 
         if (playerPos.row == null) {
             for (let row = 0; row < this.level.length; row++) {
@@ -542,6 +543,24 @@ function CenterOffSets(level) {
     console.log(typeof mapHeight)
 
     return {verticalPadding, horizontalPadding};
+}
+
+function handlePlayerInput(playerStats) {
+    const key = KeyBoardManager.getLastKey();
+
+    if (key === "return") {
+        if (CHEAT_CODES[cheatBuffer]) {
+            const message = CHEAT_CODES[cheatBuffer](playerStats);
+            addCombatLog(message);
+        } else {
+            addCombatLog("Invalid cheat code");
+        }
+        cheatBuffer = "";
+    } else if (key === "backspace") {
+        cheatBuffer = cheatBuffer.slice(0, -1);
+    } else if (key && key.length === 1) {
+        cheatBuffer += key;
+    }
 }
 
 export default Labyrinth;
