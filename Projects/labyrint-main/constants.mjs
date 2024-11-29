@@ -1,25 +1,15 @@
-export const EMPTY = " ";
+const LEVEL_LISTING_FILE = "./data/levels.txt";
+const MAP_DIRECTORY = "./data/maps/";
+const DATA_DIR = "./data/";
 
-export const FILE_PATHS = {
-    LEVEL_LISTING_FILE: "./data/levels.txt",
-    MAP_DIRECTORY: "./data/maps/",
-    DATA_DIR: "./data/"
-};
 
-export const GAME_CONSTANTS = {
-    START_LEVEL_ID: "start",
-    MAX_PLAYER_HP: 20,
-};
+// Game spesific constants.
+const START_LEVEL_ID = "start"
 
-export const SYMBOLS = {
-    EMPTY: " ",
-    HERO: "H",
-    LOOT: "$",
-    MYSTERY: "P",
-    DOOR: ["D", "d"],
-    TELEPORTER: "\u2668",
-};
 
-export const UI = {
-    NEWLINE: "\n",
-};
+// Scalar constants 
+const NEWLINE = "\n";
+
+
+
+export { LEVEL_LISTING_FILE, MAP_DIRECTORY, NEWLINE, DATA_DIR, START_LEVEL_ID }

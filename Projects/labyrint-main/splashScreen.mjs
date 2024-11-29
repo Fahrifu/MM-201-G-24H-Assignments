@@ -1,9 +1,7 @@
 import ANSI from "./utils/ANSI.mjs";
-class SplashScreen {
 
-    constructor() {
-        this.dirty = true;
-        this.graphics = `
+
+const outputGraphics = `
  ██▓    ▄▄▄       ▄▄▄▄ ▓██   ██▓ ██▀███   ██▓ ███▄    █ ▄▄▄█████▓ ██░ ██
 ▓██▒   ▒████▄    ▓█████▄▒██  ██▒▓██ ▒ ██▒▓██▒ ██ ▀█   █ ▓  ██▒ ▓▒▓██░ ██▒
 ▒██░   ▒██  ▀█▄  ▒██▒ ▄██▒██ ██░▓██ ░▄█ ▒▒██▒▓██  ▀█ ██▒▒ ▓██░ ▒░▒██▀▀██░
@@ -11,37 +9,38 @@ class SplashScreen {
 ░██████▒▓█   ▓██▒░▓█  ▀█▓░ ██▒▓░░██▓ ▒██▒░██░▒██░   ▓██░  ▒██▒ ░ ░▓█▒░██▓
 ░ ▒░▓  ░▒▒   ▓▒█░░▒▓███▀▒ ██▒▒▒ ░ ▒▓ ░▒▓░░▓  ░ ▒░   ▒ ▒   ▒ ░░    ▒ ░░▒░▒
 ░ ░ ▒  ░ ▒   ▒▒ ░▒░▒   ░▓██ ░▒░   ░▒ ░ ▒░ ▒ ░░ ░░   ░ ▒░    ░     ▒ ░▒░ ░
-░ ░    ░   ▒    ░    ░▒ ▒ ░░    ░░   ░  ▒ ░   ░   ░ ░   ░       ░  ░░ ░
-       ░   ░    ░     ░ ░     ░ ░        ░      ░           ░   ░  ░  ░
-                     ░░ ░
-       `.trim().split("\n");
-       
+  ░ ░    ░   ▒    ░    ░▒ ▒ ░░    ░░   ░  ▒ ░   ░   ░ ░   ░       ░  ░░ ░
+    ░  ░     ░  ░ ░     ░ ░        ░      ░           ░           ░  ░  ░
+                       ░░ ░
+`;
+
+
+
+class SplashScreen {
+
+    constructor() {
+        this.dirty = true;
+
     }
 
     animate(onComplete) {
-        let currentFrame = 0;
+        const lines = outputGraphics.trim().split("\n");
+        let frameIndex = 0;
 
         const intervalID = setInterval(() => {
-            this.clearScreen();
-            this.drawFrame(currentFrame);
-            currentFrame++;
+            console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
 
-            if (currentFrame >= this.graphics.length) {
+            for (let i = 0; i <= frameIndex; i++) {
+                console.log(ANSI.COLOR.YELLOW + lines[i] + ANSI.COLOR_RESET);
+            }
+
+            frameIndex++;
+            if (frameIndex >= lines.length) {
                 clearInterval(intervalID);
-                this.clearScreen;
+                console.log(ANSI.CLEAR_SCREEN);
                 onComplete();
             }
         }, 300);
-    }
-
-    clearScreen() {
-        console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
-    }
-
-    drawFrame(frameIndex) {
-        for (let i = 0; i <= frameIndex; i++) {
-            console.log(`${ANSI.COLOR.YELLOW}${this.graphics[i]}${ANSI.COLOR_RESET}`);
-        }
     }
 }
 
