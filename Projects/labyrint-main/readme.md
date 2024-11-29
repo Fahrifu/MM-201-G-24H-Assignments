@@ -41,8 +41,8 @@ The game is started with the command : <code>node game.mjs</code>
 * When a character takes damage, briefly color the background of that character red.  ✅
 * Display NPC stats during battles.  ✅
 * Center the level on the screen.  -
-* Implement a variation of the Warcraft I cheat codes, such as "There can be only one" and "Pot of gold."  
-* Add a shop where the player can buy health potions (and potentially weapons).  
+* Implement a variation of the Warcraft I cheat codes, such as "There can be only one" and "Pot of gold."  ✅
+* Add a shop where the player can buy health potions (and potentially weapons).  -
 * Implement a dynamic palette per level instead of the current static palette (as discussed in class).  
 * Create a save game system that allows the player to resume with the same level and stats after restarting the game.  
 * Lett the player decide what the movment keys should be (or suport awsd+space as whell as arrows + space)

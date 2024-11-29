@@ -92,7 +92,15 @@ const CHEAT_CODES = {
     }
 }
 
-const SHOP_ITEMS = "";
+const SHOP_ITEMS = {
+    "Health Potion": {
+        cost: 20,
+        effect: (playerStats) => {
+            playerStats.hp = Math.min(playerStats.hp + 10, HP_MAX);
+            return "You bought a Health Potion! Restored 10 HP";
+        }
+    }
+}
 
 let pallet = {
     "█": ANSI.COLOR.LIGHT_GRAY,
