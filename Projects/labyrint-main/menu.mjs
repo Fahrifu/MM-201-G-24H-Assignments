@@ -8,8 +8,6 @@ class Menu {
         this.selectedIndex = 0;
         this.onPlay = onPlay;
         this.onExit = onExit;
-        this.intervalID = null;
-
     }
 
     draw() {
@@ -31,12 +29,15 @@ class Menu {
         } else if (KeyBoardManager.isDownPressed()) {
             this.selectedIndex = (this.selectedIndex + 1) % this.options.length;
         } else if (KeyBoardManager.isEnterPressed()) {
-            clearInterval(this.intervalID);
-            if (this.selectedIndex === 0) {
-                this.onPlay();
-            } else if (this.selectedIndex === 1) {
-                this.onExit();
-            }
+            this.executeOption();
+        }
+    }
+
+    executeOption() {
+        if (this.selectedIndex === 0) {
+            this.onPlay();
+        } else if (this.selectedIndex === 1) {
+            this.onExit();
         }
     }
 
