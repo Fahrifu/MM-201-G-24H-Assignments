@@ -42,7 +42,7 @@ class Menu {
     }
 
     show() {
-        this.intervalID = setInterval(() => {
+        setInterval(() => {
             this.draw();
             this.handleInput();
         }, 100);
